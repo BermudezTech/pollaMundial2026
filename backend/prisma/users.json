@@ -1,0 +1,38 @@
+[
+    {
+        "nombre": "Luis Javier",
+        "email": "soportetecnico@ancoltec.com"
+    },
+    {
+        "nombre": "José",
+        "email": "soportetecnico1@ancoltec.com"
+    },
+    {
+        "nombre": "Santiago",
+        "email": "marketing@ancoltec.com"
+    },
+    {
+        "nombre": "Sebastián",
+        "email": "proyectos1@ancoltec.com"
+    },
+    {
+        "nombre": "John",
+        "email": "proyectos@ancoltec.com"
+    },
+    {
+        "nombre": "Viviana",
+        "email": "asesor1@ancoltec.com"
+    },
+    {
+        "nombre": "Juan Pablo",
+        "email": "administracion@ancoltec.com"
+    },
+    {
+        "nombre": "Nilza",
+        "email": "asesor@ancoltec.com"
+    },
+    {
+        "nombre": "Miguel",
+        "email": "asesor2@ancoltec.com"
+    }
+]

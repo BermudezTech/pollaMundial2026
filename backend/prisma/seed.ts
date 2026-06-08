@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -103,6 +104,35 @@ async function main() {
     console.log(`Se insertaron/actualizaron ${matches.length} partidos correctamente.`);
   } else {
     console.log('No se encontró matches.json, saltando inserción de partidos.');
+  }
+
+  // 3. Insertar Usuarios
+  const usersPath = path.join(__dirname, 'users.json');
+  if (fs.existsSync(usersPath)) {
+    const usersRaw = fs.readFileSync(usersPath, 'utf-8');
+    const users = JSON.parse(usersRaw);
+
+    for (const user of users) {
+      const salt = await bcrypt.genSalt(10);
+      const contrasena_hash = await bcrypt.hash(user.email, salt);
+
+      await prisma.usuario.upsert({
+        where: { email: user.email },
+        update: {
+          nombre: user.nombre,
+          // Actualizamos la contraseña para asegurarnos que esté igual al email (o por si cambia el hash)
+          contrasena_hash: contrasena_hash,
+        },
+        create: {
+          nombre: user.nombre,
+          email: user.email,
+          contrasena_hash: contrasena_hash,
+        },
+      });
+    }
+    console.log(`Se insertaron/actualizaron ${users.length} usuarios correctamente.`);
+  } else {
+    console.log('No se encontró users.json, saltando inserción de usuarios.');
   }
 
   console.log('Seed completado.');

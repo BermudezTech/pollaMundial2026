@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Home, Trophy, LogOut, Menu, Calculator, ScrollText } from 'lucide-react';
+import { Home, Trophy, LogOut, Menu, ScrollText } from 'lucide-react';
 import { useState } from 'react';
 import { ThemeToggle } from '../ThemeToggle';
 
@@ -10,9 +10,10 @@ export default function MainLayout() {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Fases', href: '/fases', icon: Trophy },
-    { name: 'Detalles de Puntos', href: '/detalles-puntos', icon: Calculator },
     { name: 'Reglas de la Polla', href: '/reglas', icon: ScrollText },
   ];
+
+  const userName = localStorage.getItem('nombre') || localStorage.getItem('user_name') || 'Usuario';
 
   return (
     <div className="h-screen bg-background text-foreground flex overflow-hidden">
@@ -37,7 +38,27 @@ export default function MainLayout() {
           })}
         </nav>
         <div className="mt-auto">
-          <Link to="/login" className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
+          {/* User Profile Block */}
+          <div className="flex items-center gap-3 px-3 py-3 mb-3 rounded-xl bg-muted/40 border border-border/50">
+            <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center font-black text-primary text-base shrink-0">
+              {userName.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-foreground truncate">{userName}</span>
+              <span className="text-xs text-muted-foreground">Participante</span>
+            </div>
+          </div>
+
+          <Link 
+            to="/login" 
+            onClick={() => {
+              localStorage.removeItem('user_uuid');
+              localStorage.removeItem('user_name');
+              localStorage.removeItem('uuid');
+              localStorage.removeItem('nombre');
+            }}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+          >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Logout</span>
           </Link>
@@ -83,7 +104,29 @@ export default function MainLayout() {
                 </Link>
               );
             })}
-            <Link to="/login" className="flex items-center gap-3 px-3 py-3 rounded-lg text-muted-foreground mt-4 border-t border-border">
+            
+            {/* Mobile User Profile */}
+            <div className="flex items-center gap-3 px-3 py-3 mt-4 border-t border-border">
+              <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center font-black text-primary text-base shrink-0">
+                {userName.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-bold text-foreground truncate">{userName}</span>
+                <span className="text-xs text-muted-foreground">Participante</span>
+              </div>
+            </div>
+
+            <Link 
+              to="/login" 
+              onClick={() => {
+                localStorage.removeItem('user_uuid');
+                localStorage.removeItem('user_name');
+                localStorage.removeItem('uuid');
+                localStorage.removeItem('nombre');
+                setIsMobileMenuOpen(false);
+              }}
+              className="flex items-center gap-3 px-3 py-3 rounded-lg text-muted-foreground transition-colors"
+            >
               <LogOut className="w-5 h-5" />
               <span className="font-medium">Logout</span>
             </Link>

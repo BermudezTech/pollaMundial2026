@@ -4,6 +4,9 @@ import Dashboard from './views/Dashboard';
 import Login from './views/Login';
 import Fases from './views/Fases';
 import Reglas from './views/Reglas';
+import AdminMatches from './views/AdminMatches';
+import ProtectedRoute from './App';
+import ChangePassword from './views/ChangePassword';
 
 export const router = createBrowserRouter([
   {
@@ -12,23 +15,37 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <MainLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        path: 'dashboard',
-        element: <Dashboard />,
-      },
-      {
-        path: 'fases',
-        element: <Fases />,
-      },
-      {
-        path: 'reglas',
-        element: <Reglas />,
+        path: 'change-password',
+        element: <ChangePassword />,
       },
       {
         path: '',
-        element: <Dashboard />, // Redirect to dashboard by default
+        element: <MainLayout />,
+        children: [
+          {
+            path: 'dashboard',
+            element: <Dashboard />,
+          },
+          {
+            path: 'fases',
+            element: <Fases />,
+          },
+          {
+            path: 'reglas',
+            element: <Reglas />,
+          },
+          {
+            path: 'admin-matches',
+            element: <AdminMatches />,
+          },
+          {
+            path: '',
+            element: <Dashboard />, // Redirect to dashboard by default
+          }
+        ],
       }
     ],
   },
