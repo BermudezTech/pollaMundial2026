@@ -1,0 +1,834 @@
+[
+  {
+    "fase_id": 1,
+    "equipo_a_placeholder": "MÉXICO 🇲🇽",
+    "equipo_b_placeholder": "🇿🇦 SUDÁFRICA",
+    "fecha_hora_str": "jueves, 11 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 1
+  },
+  {
+    "fase_id": 1,
+    "equipo_a_placeholder": "COREA DEL SUR 🇰🇷",
+    "equipo_b_placeholder": "🇨🇿 REP. CHECA",
+    "fecha_hora_str": "jueves, 11 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 2
+  },
+  {
+    "fase_id": 2,
+    "equipo_a_placeholder": "CANADÁ 🇨🇦",
+    "equipo_b_placeholder": "🇧🇦 BOSNIA",
+    "fecha_hora_str": "viernes, 12 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 3
+  },
+  {
+    "fase_id": 2,
+    "equipo_a_placeholder": "ESTADOS UNIDOS 🇺🇸",
+    "equipo_b_placeholder": "🇵🇾 PARAGUAY",
+    "fecha_hora_str": "viernes, 12 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 4
+  },
+  {
+    "fase_id": 2,
+    "equipo_a_placeholder": "QATAR 🇶🇦",
+    "equipo_b_placeholder": "🇨🇭 SUIZA",
+    "fecha_hora_str": "viernes, 12 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 5
+  },
+  {
+    "fase_id": 3,
+    "equipo_a_placeholder": "BRASIL 🇧🇷",
+    "equipo_b_placeholder": "🇲🇦 MARRUECOS",
+    "fecha_hora_str": "sábado, 13 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 6
+  },
+  {
+    "fase_id": 3,
+    "equipo_a_placeholder": "HAITÍ 🇭🇹",
+    "equipo_b_placeholder": "🏴󠁧󠁢󠁳󠁣󠁴󠁿 ESCOCIA",
+    "fecha_hora_str": "sábado, 13 de junio de 2026 8:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 7
+  },
+  {
+    "fase_id": 4,
+    "equipo_a_placeholder": "AUSTRALIA 🇦🇺",
+    "equipo_b_placeholder": "🇹🇷 TURQUÍA",
+    "fecha_hora_str": "sábado, 13 de junio de 2026 11:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 8
+  },
+  {
+    "fase_id": 6,
+    "equipo_a_placeholder": "ALEMANIA 🇩🇪",
+    "equipo_b_placeholder": "🇨🇼 CURAZAO",
+    "fecha_hora_str": "domingo, 14 de junio de 2026 12:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 9
+  },
+  {
+    "fase_id": 6,
+    "equipo_a_placeholder": "PAÍSES BAJOS 🇳🇱",
+    "equipo_b_placeholder": "🇯🇵 JAPÓN",
+    "fecha_hora_str": "domingo, 14 de junio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 10
+  },
+  {
+    "fase_id": 5,
+    "equipo_a_placeholder": "COSTA DE MARFIL 🇨🇮",
+    "equipo_b_placeholder": "🇪🇨 ECUADOR",
+    "fecha_hora_str": "domingo, 14 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 11
+  },
+  {
+    "fase_id": 6,
+    "equipo_a_placeholder": "SUECIA 🇸🇪",
+    "equipo_b_placeholder": "🇹🇳 TÚNEZ",
+    "fecha_hora_str": "domingo, 14 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 12
+  },
+  {
+    "fase_id": 8,
+    "equipo_a_placeholder": "ESPAÑA 🇪🇸",
+    "equipo_b_placeholder": "🇨🇻 CABO VERDE",
+    "fecha_hora_str": "lunes, 15 de junio de 2026 12:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 13
+  },
+  {
+    "fase_id": 7,
+    "equipo_a_placeholder": "BÉLGICA 🇧🇪",
+    "equipo_b_placeholder": "🇪🇬 EGIPTO",
+    "fecha_hora_str": "lunes, 15 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 14
+  },
+  {
+    "fase_id": 8,
+    "equipo_a_placeholder": "ARABIA SAUDITA 🇸🇦",
+    "equipo_b_placeholder": "🇺🇾 URUGUAY",
+    "fecha_hora_str": "lunes, 15 de junio de 2026 5:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 15
+  },
+  {
+    "fase_id": 7,
+    "equipo_a_placeholder": "IRÁN 🇮🇷",
+    "equipo_b_placeholder": "🇳🇿 NUEVA ZELANDA",
+    "fecha_hora_str": "lunes, 15 de junio de 2026 8:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 16
+  },
+  {
+    "fase_id": 9,
+    "equipo_a_placeholder": "FRANCIA 🇫🇷",
+    "equipo_b_placeholder": "🇸🇳 SENEGAL",
+    "fecha_hora_str": "martes, 16 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 17
+  },
+  {
+    "fase_id": 9,
+    "equipo_a_placeholder": "IRAK 🇮🇶",
+    "equipo_b_placeholder": "🇳🇴 NORUEGA",
+    "fecha_hora_str": "martes, 16 de junio de 2026 5:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 18
+  },
+  {
+    "fase_id": 10,
+    "equipo_a_placeholder": "ARGENTINA 🇦🇷",
+    "equipo_b_placeholder": "🇩🇿 ARGELIA",
+    "fecha_hora_str": "martes, 16 de junio de 2026 8:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 19
+  },
+  {
+    "fase_id": 10,
+    "equipo_a_placeholder": "AUSTRIA 🇦🇹",
+    "equipo_b_placeholder": "🇯🇴 JORDANIA",
+    "fecha_hora_str": "martes, 16 de junio de 2026 11:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 20
+  },
+  {
+    "fase_id": 11,
+    "equipo_a_placeholder": "PORTUGAL 🇵🇹",
+    "equipo_b_placeholder": "🇨🇩 RD CONGO",
+    "fecha_hora_str": "miércoles, 17 de junio de 2026 12:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 21
+  },
+  {
+    "fase_id": 12,
+    "equipo_a_placeholder": "INGLATERRA 🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    "equipo_b_placeholder": "🇭🇷 CROACIA",
+    "fecha_hora_str": "miércoles, 17 de junio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 22
+  },
+  {
+    "fase_id": 12,
+    "equipo_a_placeholder": "GHANA 🇬🇭",
+    "equipo_b_placeholder": "🇵🇦 PANAMÁ",
+    "fecha_hora_str": "miércoles, 17 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 23
+  },
+  {
+    "fase_id": 11,
+    "equipo_a_placeholder": "UZBEKISTÁN 🇺🇿",
+    "equipo_b_placeholder": "🇨🇴 COLOMBIA",
+    "fecha_hora_str": "miércoles, 17 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 24
+  },
+  {
+    "fase_id": 1,
+    "equipo_a_placeholder": "SUDÁFRICA 🇿🇦",
+    "equipo_b_placeholder": "🇨🇿 REP. CHECA",
+    "fecha_hora_str": "jueves, 18 de junio de 2026 11:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 25
+  },
+  {
+    "fase_id": 2,
+    "equipo_a_placeholder": "BOSNIA 🇧🇦",
+    "equipo_b_placeholder": "🇨🇭 SUIZA",
+    "fecha_hora_str": "jueves, 18 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 26
+  },
+  {
+    "fase_id": 2,
+    "equipo_a_placeholder": "CANADÁ 🇨🇦",
+    "equipo_b_placeholder": "🇶🇦 QATAR",
+    "fecha_hora_str": "jueves, 18 de junio de 2026 5:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 27
+  },
+  {
+    "fase_id": 1,
+    "equipo_a_placeholder": "MÉXICO 🇲🇽",
+    "equipo_b_placeholder": "🇰🇷 COREA DEL SUR",
+    "fecha_hora_str": "jueves, 18 de junio de 2026 8:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 28
+  },
+  {
+    "fase_id": 4,
+    "equipo_a_placeholder": "ESTADOS UNIDOS 🇺🇸",
+    "equipo_b_placeholder": "🇦🇺 AUSTRALIA",
+    "fecha_hora_str": "viernes, 19 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 29
+  },
+  {
+    "fase_id": 3,
+    "equipo_a_placeholder": "ESCOCIA 🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+    "equipo_b_placeholder": "🇲🇦 MARRUECOS",
+    "fecha_hora_str": "viernes, 19 de junio de 2026 5:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 30
+  },
+  {
+    "fase_id": 3,
+    "equipo_a_placeholder": "BRASIL 🇧🇷",
+    "equipo_b_placeholder": "🇭🇹 HAITÍ",
+    "fecha_hora_str": "viernes, 19 de junio de 2026 7:30 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 31
+  },
+  {
+    "fase_id": 4,
+    "equipo_a_placeholder": "TURQUÍA 🇹🇷",
+    "equipo_b_placeholder": "🇵🇾 PARAGUAY",
+    "fecha_hora_str": "viernes, 19 de junio de 2026 10:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 32
+  },
+  {
+    "fase_id": 6,
+    "equipo_a_placeholder": "PAÍSES BAJOS 🇳🇱",
+    "equipo_b_placeholder": "🇸🇪 SUECIA",
+    "fecha_hora_str": "sábado, 20 de junio de 2026 12:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 33
+  },
+  {
+    "fase_id": 5,
+    "equipo_a_placeholder": "ALEMANIA 🇩🇪",
+    "equipo_b_placeholder": "🇨🇮 COSTA DE MARFIL",
+    "fecha_hora_str": "sábado, 20 de junio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 34
+  },
+  {
+    "fase_id": 5,
+    "equipo_a_placeholder": "ECUADOR 🇪🇨",
+    "equipo_b_placeholder": "🇨🇼 CURAZAO",
+    "fecha_hora_str": "sábado, 20 de junio de 2026 7:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 35
+  },
+  {
+    "fase_id": 6,
+    "equipo_a_placeholder": "TÚNEZ 🇹🇳",
+    "equipo_b_placeholder": "🇯🇵 JAPÓN",
+    "fecha_hora_str": "sábado, 20 de junio de 2026 11:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 36
+  },
+  {
+    "fase_id": 8,
+    "equipo_a_placeholder": "ESPAÑA 🇪🇸",
+    "equipo_b_placeholder": "🇸🇦 ARABIA SAUDITA",
+    "fecha_hora_str": "domingo, 21 de junio de 2026 11:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 37
+  },
+  {
+    "fase_id": 8,
+    "equipo_a_placeholder": "BÉLGICA 🇧🇪",
+    "equipo_b_placeholder": "🇮🇷 IRÁN",
+    "fecha_hora_str": "domingo, 21 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 38
+  },
+  {
+    "fase_id": 8,
+    "equipo_a_placeholder": "URUGUAY 🇺🇾",
+    "equipo_b_placeholder": "🇨🇻 CABO VERDE",
+    "fecha_hora_str": "domingo, 21 de junio de 2026 5:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 39
+  },
+  {
+    "fase_id": 7,
+    "equipo_a_placeholder": "NUEVA ZELANDA 🇳🇿",
+    "equipo_b_placeholder": "🇪🇬 EGIPTO",
+    "fecha_hora_str": "domingo, 21 de junio de 2026 8:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 40
+  },
+  {
+    "fase_id": 10,
+    "equipo_a_placeholder": "ARGENTINA 🇦🇷",
+    "equipo_b_placeholder": "🇦🇹 AUSTRIA",
+    "fecha_hora_str": "lunes, 22 de junio de 2026 11:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 41
+  },
+  {
+    "fase_id": 9,
+    "equipo_a_placeholder": "FRANCIA 🇫🇷",
+    "equipo_b_placeholder": "🇮🇶 IRAK",
+    "fecha_hora_str": "lunes, 22 de junio de 2026 4:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 42
+  },
+  {
+    "fase_id": 9,
+    "equipo_a_placeholder": "NORUEGA 🇳🇴",
+    "equipo_b_placeholder": "🇸🇳 SENEGAL",
+    "fecha_hora_str": "lunes, 22 de junio de 2026 7:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 43
+  },
+  {
+    "fase_id": 10,
+    "equipo_a_placeholder": "JORDANIA 🇯🇴",
+    "equipo_b_placeholder": "🇩🇿 ARGELIA",
+    "fecha_hora_str": "lunes, 22 de junio de 2026 10:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 44
+  },
+  {
+    "fase_id": 11,
+    "equipo_a_placeholder": "PORTUGAL 🇵🇹",
+    "equipo_b_placeholder": "🇺🇿 UZBEKISTÁN",
+    "fecha_hora_str": "martes, 23 de junio de 2026 12:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 45
+  },
+  {
+    "fase_id": 12,
+    "equipo_a_placeholder": "INGLATERRA 🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    "equipo_b_placeholder": "🇬🇭 GHANA",
+    "fecha_hora_str": "martes, 23 de junio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 46
+  },
+  {
+    "fase_id": 12,
+    "equipo_a_placeholder": "PANAMÁ 🇵🇦",
+    "equipo_b_placeholder": "🇭🇷 CROACIA",
+    "fecha_hora_str": "martes, 23 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 47
+  },
+  {
+    "fase_id": 11,
+    "equipo_a_placeholder": "COLOMBIA 🇨🇴",
+    "equipo_b_placeholder": "🇨🇩 RD CONGO",
+    "fecha_hora_str": "martes, 23 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 48
+  },
+  {
+    "fase_id": 2,
+    "equipo_a_placeholder": "SUIZA 🇨🇭",
+    "equipo_b_placeholder": "🇨🇦 CANADÁ",
+    "fecha_hora_str": "miércoles, 24 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 49
+  },
+  {
+    "fase_id": 2,
+    "equipo_a_placeholder": "BOSNIA 🇧🇦",
+    "equipo_b_placeholder": "🇶🇦 QATAR",
+    "fecha_hora_str": "miércoles, 24 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 50
+  },
+  {
+    "fase_id": 3,
+    "equipo_a_placeholder": "ESCOCIA 🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+    "equipo_b_placeholder": "🇧🇷 BRASIL",
+    "fecha_hora_str": "miércoles, 24 de junio de 2026 5:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 51
+  },
+  {
+    "fase_id": 3,
+    "equipo_a_placeholder": "MARRUECOS 🇲🇦",
+    "equipo_b_placeholder": "🇭🇹 HAITÍ",
+    "fecha_hora_str": "miércoles, 24 de junio de 2026 5:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 52
+  },
+  {
+    "fase_id": 1,
+    "equipo_a_placeholder": "REP. CHECA 🇨🇿",
+    "equipo_b_placeholder": "🇲🇽 MÉXICO",
+    "fecha_hora_str": "miércoles, 24 de junio de 2026 8:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 53
+  },
+  {
+    "fase_id": 1,
+    "equipo_a_placeholder": "SUDÁFRICA 🇿🇦",
+    "equipo_b_placeholder": "🇰🇷 COREA DEL SUR",
+    "fecha_hora_str": "miércoles, 24 de junio de 2026 8:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 54
+  },
+  {
+    "fase_id": 5,
+    "equipo_a_placeholder": "ECUADOR 🇪🇨",
+    "equipo_b_placeholder": "🇩🇪 ALEMANIA",
+    "fecha_hora_str": "jueves, 25 de junio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 55
+  },
+  {
+    "fase_id": 5,
+    "equipo_a_placeholder": "CURAZAO 🇨🇼",
+    "equipo_b_placeholder": "🇨🇮 COSTA DE MARFIL",
+    "fecha_hora_str": "jueves, 25 de junio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 56
+  },
+  {
+    "fase_id": 6,
+    "equipo_a_placeholder": "TÚNEZ 🇹🇳",
+    "equipo_b_placeholder": "🇳🇱 PAÍSES BAJOS",
+    "fecha_hora_str": "jueves, 25 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 57
+  },
+  {
+    "fase_id": 6,
+    "equipo_a_placeholder": "JAPÓN 🇯🇵",
+    "equipo_b_placeholder": "🇸🇪 SUECIA",
+    "fecha_hora_str": "jueves, 25 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 58
+  },
+  {
+    "fase_id": 4,
+    "equipo_a_placeholder": "TURQUÍA 🇹🇷",
+    "equipo_b_placeholder": "🇺🇸 ESTADOS UNIDOS",
+    "fecha_hora_str": "jueves, 25 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 59
+  },
+  {
+    "fase_id": 4,
+    "equipo_a_placeholder": "PARAGUAY 🇵🇾",
+    "equipo_b_placeholder": "🇦🇺 AUSTRALIA",
+    "fecha_hora_str": "jueves, 25 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 60
+  },
+  {
+    "fase_id": 9,
+    "equipo_a_placeholder": "NORUEGA 🇳🇴",
+    "equipo_b_placeholder": "🇫🇷 FRANCIA",
+    "fecha_hora_str": "viernes, 26 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 61
+  },
+  {
+    "fase_id": 9,
+    "equipo_a_placeholder": "SENEGAL 🇸🇳",
+    "equipo_b_placeholder": "🇮🇶 IRAK",
+    "fecha_hora_str": "viernes, 26 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 62
+  },
+  {
+    "fase_id": 8,
+    "equipo_a_placeholder": "URUGUAY 🇺🇾",
+    "equipo_b_placeholder": "🇪🇸 ESPAÑA",
+    "fecha_hora_str": "viernes, 26 de junio de 2026 7:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 63
+  },
+  {
+    "fase_id": 8,
+    "equipo_a_placeholder": "CABO VERDE 🇨🇻",
+    "equipo_b_placeholder": "🇸🇦 ARABIA SAUDITA",
+    "fecha_hora_str": "viernes, 26 de junio de 2026 7:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 64
+  },
+  {
+    "fase_id": 7,
+    "equipo_a_placeholder": "NUEVA ZELANDA 🇳🇿",
+    "equipo_b_placeholder": "🇧🇪 BÉLGICA",
+    "fecha_hora_str": "viernes, 26 de junio de 2026 10:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 65
+  },
+  {
+    "fase_id": 7,
+    "equipo_a_placeholder": "EGIPTO 🇪🇬",
+    "equipo_b_placeholder": "🇮🇷 IRÁN",
+    "fecha_hora_str": "viernes, 26 de junio de 2026 10:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 66
+  },
+  {
+    "fase_id": 12,
+    "equipo_a_placeholder": "PANAMÁ 🇵🇦",
+    "equipo_b_placeholder": "🏴󠁧󠁢󠁥󠁮󠁧󠁿 INGLATERRA",
+    "fecha_hora_str": "sábado, 27 de junio de 2026 4:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 67
+  },
+  {
+    "fase_id": 12,
+    "equipo_a_placeholder": "CROACIA 🇭🇷",
+    "equipo_b_placeholder": "🇬🇭 GHANA",
+    "fecha_hora_str": "sábado, 27 de junio de 2026 4:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 68
+  },
+  {
+    "fase_id": 11,
+    "equipo_a_placeholder": "COLOMBIA 🇨🇴",
+    "equipo_b_placeholder": "🇵🇹 PORTUGAL",
+    "fecha_hora_str": "sábado, 27 de junio de 2026 6:30 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 69
+  },
+  {
+    "fase_id": 11,
+    "equipo_a_placeholder": "RD CONGO 🇨🇩",
+    "equipo_b_placeholder": "🇺🇿 UZBEKISTÁN",
+    "fecha_hora_str": "sábado, 27 de junio de 2026 6:30 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 70
+  },
+  {
+    "fase_id": 10,
+    "equipo_a_placeholder": "JORDANIA 🇯🇴",
+    "equipo_b_placeholder": "🇦🇷 ARGENTINA",
+    "fecha_hora_str": "sábado, 27 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 71
+  },
+  {
+    "fase_id": 10,
+    "equipo_a_placeholder": "ARGELIA 🇩🇿",
+    "equipo_b_placeholder": "🇦🇹 AUSTRIA",
+    "fecha_hora_str": "sábado, 27 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO",
+    "id": 72
+  },
+  {
+    "id": 73,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo A",
+    "equipo_b_placeholder": "3º Grupo C/D/E",
+    "fecha_hora_str": "domingo, 28 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 74,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo B",
+    "equipo_b_placeholder": "3º Grupo A/E/F",
+    "fecha_hora_str": "domingo, 28 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 75,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo C",
+    "equipo_b_placeholder": "3º Grupo H/I/J",
+    "fecha_hora_str": "lunes, 29 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 76,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo D",
+    "equipo_b_placeholder": "3º Grupo B/F/G",
+    "fecha_hora_str": "lunes, 29 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 77,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo E",
+    "equipo_b_placeholder": "2º Grupo F",
+    "fecha_hora_str": "martes, 30 de junio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 78,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo F",
+    "equipo_b_placeholder": "2º Grupo E",
+    "fecha_hora_str": "martes, 30 de junio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 79,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo G",
+    "equipo_b_placeholder": "2º Grupo H",
+    "fecha_hora_str": "miércoles, 1 de julio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 80,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo H",
+    "equipo_b_placeholder": "2º Grupo G",
+    "fecha_hora_str": "miércoles, 1 de julio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 81,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo I",
+    "equipo_b_placeholder": "2º Grupo J",
+    "fecha_hora_str": "jueves, 2 de julio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 82,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo J",
+    "equipo_b_placeholder": "2º Grupo I",
+    "fecha_hora_str": "jueves, 2 de julio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 83,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo K",
+    "equipo_b_placeholder": "2º Grupo L",
+    "fecha_hora_str": "viernes, 3 de julio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 84,
+    "fase_id": 13,
+    "equipo_a_placeholder": "1º Grupo L",
+    "equipo_b_placeholder": "2º Grupo K",
+    "fecha_hora_str": "viernes, 3 de julio de 2026 6:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 85,
+    "fase_id": 13,
+    "equipo_a_placeholder": "2º Grupo A",
+    "equipo_b_placeholder": "2º Grupo C",
+    "fecha_hora_str": "domingo, 28 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 86,
+    "fase_id": 13,
+    "equipo_a_placeholder": "2º Grupo B",
+    "equipo_b_placeholder": "2º Grupo D",
+    "fecha_hora_str": "lunes, 29 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 87,
+    "fase_id": 13,
+    "equipo_a_placeholder": "2º Grupo I",
+    "equipo_b_placeholder": "2º Grupo K",
+    "fecha_hora_str": "martes, 30 de junio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 88,
+    "fase_id": 13,
+    "equipo_a_placeholder": "2º Grupo J",
+    "equipo_b_placeholder": "2º Grupo L",
+    "fecha_hora_str": "miércoles, 1 de julio de 2026 9:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 89,
+    "fase_id": 14,
+    "equipo_a_placeholder": "Ganador 74",
+    "equipo_b_placeholder": "Ganador 77",
+    "fecha_hora_str": "sábado, 4 de julio de 2026 12:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 90,
+    "fase_id": 14,
+    "equipo_a_placeholder": "Ganador 73",
+    "equipo_b_placeholder": "Ganador 75",
+    "fecha_hora_str": "sábado, 4 de julio de 2026 4:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 91,
+    "fase_id": 14,
+    "equipo_a_placeholder": "Ganador 76",
+    "equipo_b_placeholder": "Ganador 78",
+    "fecha_hora_str": "domingo, 5 de julio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 92,
+    "fase_id": 14,
+    "equipo_a_placeholder": "Ganador 79",
+    "equipo_b_placeholder": "Ganador 80",
+    "fecha_hora_str": "domingo, 5 de julio de 2026 7:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 93,
+    "fase_id": 14,
+    "equipo_a_placeholder": "Ganador 83",
+    "equipo_b_placeholder": "Ganador 84",
+    "fecha_hora_str": "lunes, 6 de julio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 94,
+    "fase_id": 14,
+    "equipo_a_placeholder": "Ganador 81",
+    "equipo_b_placeholder": "Ganador 82",
+    "fecha_hora_str": "lunes, 6 de julio de 2026 7:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 95,
+    "fase_id": 14,
+    "equipo_a_placeholder": "Ganador 86",
+    "equipo_b_placeholder": "Ganador 88",
+    "fecha_hora_str": "martes, 7 de julio de 2026 11:00 a. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 96,
+    "fase_id": 14,
+    "equipo_a_placeholder": "Ganador 85",
+    "equipo_b_placeholder": "Ganador 87",
+    "fecha_hora_str": "martes, 7 de julio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 97,
+    "fase_id": 15,
+    "equipo_a_placeholder": "Ganador [O1]",
+    "equipo_b_placeholder": "Ganador [O2]",
+    "fecha_hora_str": "jueves, 9 de julio de 2026 3:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 98,
+    "fase_id": 15,
+    "equipo_a_placeholder": "Ganador [O5]",
+    "equipo_b_placeholder": "Ganador [O6]",
+    "fecha_hora_str": "viernes, 10 de julio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 99,
+    "fase_id": 15,
+    "equipo_a_placeholder": "Ganador [O3]",
+    "equipo_b_placeholder": "Ganador [O4]",
+    "fecha_hora_str": "sábado, 11 de julio de 2026 4:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 100,
+    "fase_id": 15,
+    "equipo_a_placeholder": "Ganador [O7]",
+    "equipo_b_placeholder": "Ganador [O8]",
+    "fecha_hora_str": "sábado, 11 de julio de 2026 8:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 101,
+    "fase_id": 16,
+    "equipo_a_placeholder": "Ganador [C1]",
+    "equipo_b_placeholder": "Ganador [C2]",
+    "fecha_hora_str": "martes, 14 de julio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 102,
+    "fase_id": 16,
+    "equipo_a_placeholder": "Ganador [C3]",
+    "equipo_b_placeholder": "Ganador [C4]",
+    "fecha_hora_str": "miércoles, 15 de julio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 103,
+    "fase_id": 17,
+    "equipo_a_placeholder": "Perdedor [S1]",
+    "equipo_b_placeholder": "Perdedor [S2]",
+    "fecha_hora_str": "sábado, 18 de julio de 2026 4:00 p. m.",
+    "estado": "PROGRAMADO"
+  },
+  {
+    "id": 104,
+    "fase_id": 18,
+    "equipo_a_placeholder": "Ganador [S1]",
+    "equipo_b_placeholder": "Ganador [S2]",
+    "fecha_hora_str": "domingo, 19 de julio de 2026 2:00 p. m.",
+    "estado": "PROGRAMADO"
+  }
+]

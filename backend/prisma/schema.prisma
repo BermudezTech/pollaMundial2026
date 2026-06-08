@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id              String       @id @default(uuid())
+  nombre          String
+  email           String       @unique
+  contrasena_hash String
+  predicciones    Prediccion[]
+}
+
+model Fase {
+  id             Int       @id
+  nombre         String
+  permite_empate Boolean
+  partidos       Partido[]
+}
+
+model Partido {
+  id                   Int          @id
+  fase_id              Int
+  equipo_a_placeholder String
+  equipo_b_placeholder String
+  equipo_a_real        String?
+  equipo_b_real        String?
+  goles_a              Int?
+  goles_b              Int?
+  clasifica_real       String?
+  fecha_hora           DateTime
+  estado               String
+  fase                 Fase         @relation(fields: [fase_id], references: [id])
+  predicciones         Prediccion[]
+}
+
+model Prediccion {
+  id                   String  @id @default(uuid())
+  usuario_id           String
+  partido_id           Int
+  prediccion_goles_a   Int
+  prediccion_goles_b   Int
+  prediccion_clasifica String?
+  puntos_ganados       Int     @default(0)
+  usuario              Usuario @relation(fields: [usuario_id], references: [id])
+  partido              Partido @relation(fields: [partido_id], references: [id])
+}
