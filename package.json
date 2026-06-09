@@ -1,0 +1,9 @@
+{
+  "name": "polla-mundial-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Root workspace for Polla Mundial",
+  "scripts": {
+    "sync-version": "node sync-version.js"
+  }
+}

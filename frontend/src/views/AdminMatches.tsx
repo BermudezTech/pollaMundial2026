@@ -1,10 +1,34 @@
-import { useState, useMemo } from 'react';
-import { getSavedMatches, saveSavedMatches, mockFases } from '../services/mockData';
+import { useState, useMemo, useEffect } from 'react';
+import { mockFases } from '../services/mockData';
 import type { MatchMock } from '../services/mockData';
-import { Search, Save, Calendar, CheckCircle, Clock } from 'lucide-react';
+import { Search, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 
 export default function AdminMatches() {
-  const [matches, setMatches] = useState<MatchMock[]>(() => getSavedMatches());
+  const [matches, setMatches] = useState<MatchMock[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMatches = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:3000/matches/all');
+      if (!response.ok) {
+        throw new Error('Error al cargar partidos reales del servidor');
+      }
+      const data = await response.json();
+      setMatches(data);
+    } catch (err: any) {
+      setError(err.message || 'Error de conexión.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMatches();
+  }, []);
+
   const [selectedFaseId, setSelectedFaseId] = useState<number | 'ALL'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -19,7 +43,7 @@ export default function AdminMatches() {
     });
   }, [matches, selectedFaseId, searchQuery]);
 
-  const handleUpdateMatchScore = (
+  const handleUpdateMatchScore = async (
     matchId: number,
     scoreAStr: string,
     scoreBStr: string,
@@ -28,29 +52,65 @@ export default function AdminMatches() {
     const score_a = scoreAStr === '' ? null : parseInt(scoreAStr);
     const score_b = scoreBStr === '' ? null : parseInt(scoreBStr);
 
-    const updatedMatches = matches.map(m => {
-      if (m.id === matchId) {
-        return {
-          ...m,
-          score_a,
-          score_b,
+    try {
+      const response = await fetch(`http://localhost:3000/matches/${matchId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          goles_a: score_a,
+          goles_b: score_b,
           estado,
-          // Recalculate user points if final
-          puntos_ganados: estado === 'FINALIZADO' && score_a !== null && score_b !== null && m.user_pred_a !== null && m.user_pred_b !== null
-            ? (score_a === m.user_pred_a && score_b === m.user_pred_b ? 5 :
-              ((score_a - score_b > 0 && m.user_pred_a! - m.user_pred_b! > 0) || (score_a - score_b < 0 && m.user_pred_a! - m.user_pred_b! < 0) || (score_a === score_b && m.user_pred_a === m.user_pred_b)
-                ? (score_a - score_b === m.user_pred_a! - m.user_pred_b! ? 3 : 2)
-                : (score_a === m.user_pred_a || score_b === m.user_pred_b ? 1 : 0)))
-            : undefined
-        };
-      }
-      return m;
-    });
+        }),
+      });
 
-    setMatches(updatedMatches);
-    saveSavedMatches(updatedMatches);
-    alert(`Partido #${matchId} actualizado con éxito.`);
+      if (!response.ok) {
+        throw new Error('Error al actualizar el marcador del partido en el servidor');
+      }
+
+      setMatches(prev => prev.map(m => {
+        if (m.id === matchId) {
+          return {
+            ...m,
+            score_a,
+            score_b,
+            estado
+          };
+        }
+        return m;
+      }));
+
+      alert(`Partido #${matchId} actualizado con éxito.`);
+    } catch (err: any) {
+      console.error(err);
+      alert('Error al actualizar el partido: ' + err.message);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <RefreshCw className="w-8 h-8 text-primary animate-spin" />
+        <p className="text-muted-foreground animate-pulse">Cargando partidos reales...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-card border border-border rounded-xl p-8 text-center space-y-4 max-w-xl mx-auto">
+        <div className="text-destructive text-lg font-bold">Ocurrió un error al cargar los partidos</div>
+        <p className="text-muted-foreground">{error}</p>
+        <button 
+          onClick={fetchMatches}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2 rounded-lg transition-colors cursor-pointer"
+        >
+          Reintentar
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -96,7 +156,7 @@ export default function AdminMatches() {
       </div>
 
       {/* Matches Admin Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filteredMatches.length === 0 ? (
           <div className="col-span-full py-12 text-center text-muted-foreground bg-card border border-border border-dashed rounded-2xl">
             No se encontraron partidos para los filtros seleccionados.
@@ -132,9 +192,17 @@ export default function AdminMatches() {
                   <div className="flex items-center justify-between gap-2">
                     {/* Team A */}
                     <div className="flex-1 flex flex-col items-center text-center">
-                      <span className="text-xs font-black text-primary mb-1">
-                        {match.equipo_a.substring(0, 3).toUpperCase()}
-                      </span>
+                      {(() => {
+                        const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]{2}/u;
+                        const matchEmoji = match.equipo_a.match(emojiRegex);
+                        return matchEmoji ? (
+                          <span className="text-2xl mb-1 select-none">{matchEmoji[0]}</span>
+                        ) : (
+                          <span className="text-xs font-black text-primary mb-1">
+                            {match.equipo_a.substring(0, 3).toUpperCase()}
+                          </span>
+                        );
+                      })()}
                       <span className="text-sm font-bold text-foreground line-clamp-1">{match.equipo_a}</span>
                     </div>
 
@@ -161,9 +229,17 @@ export default function AdminMatches() {
 
                     {/* Team B */}
                     <div className="flex-1 flex flex-col items-center text-center">
-                      <span className="text-xs font-black text-primary mb-1">
-                        {match.equipo_b.substring(0, 3).toUpperCase()}
-                      </span>
+                      {(() => {
+                        const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]{2}/u;
+                        const matchEmoji = match.equipo_b.match(emojiRegex);
+                        return matchEmoji ? (
+                          <span className="text-2xl mb-1 select-none">{matchEmoji[0]}</span>
+                        ) : (
+                          <span className="text-xs font-black text-primary mb-1">
+                            {match.equipo_b.substring(0, 3).toUpperCase()}
+                          </span>
+                        );
+                      })()}
                       <span className="text-sm font-bold text-foreground line-clamp-1">{match.equipo_b}</span>
                     </div>
                   </div>

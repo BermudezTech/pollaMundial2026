@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { CalendarClock, ChevronDown, ChevronUp, Users, Lock, RefreshCw } from 'lucide-react';
+import { CalendarClock, ChevronDown, ChevronUp, Users, Lock, RefreshCw, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { calculateMatchPoints } from '../services/mockData';
 
 interface Partido {
@@ -26,31 +26,27 @@ function calculatePoints(realA: number, realB: number, predA: number, predB: num
   return calculateMatchPoints(realA, realB, predA, predB);
 }
 
-const getPlayerPredictionsForMatch = (matchId: number, scoreA: number, scoreB: number) => {
-  if (matchId === 2) {
-    return [
-      { name: 'Carlos Díaz', predA: 1, predB: 1 },
-      { name: 'Ana Gómez', predA: 0, predB: 0 },
-      { name: 'Pedro Sánchez', predA: 2, predB: 1 },
-      { name: 'Luis Martínez', predA: 1, predB: 2 },
-      { name: 'Marta Ríos', predA: 0, predB: 0 },
-      { name: 'Juan Pérez', predA: 1, predB: 1 },
-      { name: 'Sofía Torres', predA: 2, predB: 0 },
-      { name: 'Diego Gómez', predA: 0, predB: 1 },
-    ];
+function getPointsReason(realA: number, realB: number, predA: number, predB: number): string {
+  if (realA === predA && realB === predB) return 'Marcador Exacto';
+  
+  const realDiff = realA - realB;
+  const predDiff = predA - predB;
+  
+  const realWinner = realDiff > 0 ? 1 : realDiff < 0 ? -1 : 0;
+  const predWinner = predDiff > 0 ? 1 : predDiff < 0 ? -1 : 0;
+  
+  if (realWinner === predWinner) {
+    if (realDiff === predDiff) return 'Ganador/Empate + Diferencia';
+    return 'Ganador o Empate Seco';
   }
+  
+  if (realA === predA || realB === predB) {
+    return 'Acierto de Goles Individual';
+  }
+  
+  return 'Sin Aciertos';
+}
 
-  return [
-    { name: 'Carlos Díaz', predA: 2, predB: 1 },
-    { name: 'Ana Gómez', predA: 1, predB: 0 },
-    { name: 'Pedro Sánchez', predA: 0, predB: 2 },
-    { name: 'Luis Martínez', predA: 2, predB: 0 },
-    { name: 'Marta Ríos', predA: 1, predB: 1 },
-    { name: 'Juan Pérez', predA: 3, predB: 1 },
-    { name: 'Sofía Torres', predA: 0, predB: 0 },
-    { name: 'Diego Gómez', predA: 2, predB: 2 },
-  ];
-};
 
 export default function Fases() {
   const [fases, setFases] = useState<Fase[]>([]);
@@ -60,6 +56,25 @@ export default function Fases() {
   const [error, setError] = useState<string | null>(null);
 
   const [localPredictions, setLocalPredictions] = useState<Record<number, { predA: number; predB: number }>>({});
+  
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: 'success' | 'error';
+  }>({ show: false, message: '', type: 'success' });
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ show: true, message, type });
+  };
+
+  useEffect(() => {
+    if (toast.show) {
+      const timer = setTimeout(() => {
+        setToast(prev => ({ ...prev, show: false }));
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast.show]);
 
   const loadFases = async () => {
     setIsLoading(true);
@@ -77,16 +92,24 @@ export default function Fases() {
       }
 
       const predictions: Record<number, { predA: number; predB: number }> = {};
-      data.forEach((fase) => {
-        fase.partidos.forEach((partido) => {
-          const val = localStorage.getItem(`pred_match_${partido.id}`);
-          if (val) {
-            try {
-              predictions[partido.id] = JSON.parse(val);
-            } catch (e) {}
+      const userUuid = localStorage.getItem('user_uuid') || localStorage.getItem('uuid');
+      
+      if (userUuid) {
+        try {
+          const predResponse = await fetch(`http://localhost:3000/predictions/${userUuid}`);
+          if (predResponse.ok) {
+            const predData = await predResponse.json();
+            predData.forEach((pred: any) => {
+              predictions[pred.partido_id] = {
+                predA: pred.prediccion_goles_a,
+                predB: pred.prediccion_goles_b,
+              };
+            });
           }
-        });
-      });
+        } catch (e) {
+          console.error('Error fetching backend predictions:', e);
+        }
+      }
       setLocalPredictions(predictions);
     } catch (err: any) {
       setError(err.message || 'Error de conexión.');
@@ -102,31 +125,72 @@ export default function Fases() {
   const selectedFase = useMemo(() => fases.find(f => f.id === selectedFaseId), [selectedFaseId, fases]);
   const phaseMatches = useMemo(() => selectedFase?.partidos || [], [selectedFase]);
 
-  const toggleDetails = (matchId: number) => {
-    setExpandedMatches(prev => ({ ...prev, [matchId]: !prev[matchId] }));
+  const [otherPredictions, setOtherPredictions] = useState<Record<number, { name: string; predA: number; predB: number }[]>>({});
+  const [loadingOthers, setLoadingOthers] = useState<Record<number, boolean>>({});
+
+  const toggleDetails = async (matchId: number) => {
+    const isExpanding = !expandedMatches[matchId];
+    setExpandedMatches(prev => ({ ...prev, [matchId]: isExpanding }));
+    
+    if (isExpanding && !otherPredictions[matchId]) {
+      setLoadingOthers(prev => ({ ...prev, [matchId]: true }));
+      try {
+        const response = await fetch(`http://localhost:3000/predictions/match/${matchId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setOtherPredictions(prev => ({ ...prev, [matchId]: data }));
+        }
+      } catch (e) {
+        console.error('Error loading other predictions:', e);
+      } finally {
+        setLoadingOthers(prev => ({ ...prev, [matchId]: false }));
+      }
+    }
   };
 
-  const handleSavePrediction = (matchId: number, predAStr: string, predBStr: string) => {
+  const handleSavePrediction = async (matchId: number, predAStr: string, predBStr: string) => {
     const predA = predAStr === '' ? null : parseInt(predAStr);
     const predB = predBStr === '' ? null : parseInt(predBStr);
 
     if (predA === null || predB === null) {
-      localStorage.removeItem(`pred_match_${matchId}`);
-      setLocalPredictions(prev => {
-        const updated = { ...prev };
-        delete updated[matchId];
-        return updated;
-      });
-    } else {
-      const pred = { predA, predB };
-      localStorage.setItem(`pred_match_${matchId}`, JSON.stringify(pred));
-      setLocalPredictions(prev => ({
-        ...prev,
-        [matchId]: pred,
-      }));
+      showToast('Por favor ingrese los goles para ambos equipos.', 'error');
+      return;
     }
 
-    alert('Predicción guardada correctamente.');
+    const userUuid = localStorage.getItem('user_uuid') || localStorage.getItem('uuid');
+    if (!userUuid) {
+      showToast('Usuario no identificado. Por favor inicie sesión.', 'error');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/predictions', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          usuario_id: userUuid,
+          partido_id: matchId,
+          prediccion_goles_a: predA,
+          prediccion_goles_b: predB,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al guardar la predicción en el servidor');
+      }
+
+      setLocalPredictions(prev => ({
+        ...prev,
+        [matchId]: { predA, predB },
+      }));
+
+      showToast('Predicción guardada correctamente.', 'success');
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error al guardar la predicción: ' + err.message, 'error');
+    }
   };
 
   if (isLoading) {
@@ -299,6 +363,11 @@ export default function Fases() {
                           <div className="flex flex-col">
                             <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Tu Predicción</span>
                             <span className="text-lg font-black text-foreground tracking-widest">{userPredA ?? '-'} - {userPredB ?? '-'}</span>
+                            {match.estado === 'FINALIZADO' && userPredA !== null && userPredB !== null && (
+                              <span className="text-[10px] text-primary font-bold mt-1 uppercase tracking-wider">
+                                {getPointsReason(match.goles_a || 0, match.goles_b || 0, userPredA, userPredB)}
+                              </span>
+                            )}
                           </div>
                           <div className="flex flex-col items-end">
                             <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Puntos Obtenidos</span>
@@ -329,32 +398,48 @@ export default function Fases() {
                         {expandedMatches[match.id] && (
                           <div className="mt-2 space-y-2 border-t border-border pt-4 animate-in fade-in slide-in-from-top-1 duration-200">
                             <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 px-1">Detalle de Puntuación por Jugador</h4>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {getPlayerPredictionsForMatch(match.id, match.goles_a || 0, match.goles_b || 0).map((player) => {
-                                const pts = calculatePoints(match.goles_a || 0, match.goles_b || 0, player.predA, player.predB);
-                                return (
-                                  <div key={player.name} className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/60 hover:bg-muted/70 transition-all">
-                                    <div className="flex flex-col">
-                                      <span className="text-sm font-bold text-foreground">{player.name}</span>
-                                      <span className="text-xs text-muted-foreground">Predijo: <span className="font-mono font-semibold text-foreground">{player.predA} - {player.predB}</span></span>
+                            {loadingOthers[match.id] ? (
+                              <div className="py-4 text-center text-sm text-muted-foreground animate-pulse">
+                                Cargando predicciones...
+                              </div>
+                            ) : !otherPredictions[match.id] || otherPredictions[match.id].length === 0 ? (
+                              <div className="py-4 text-center text-sm text-muted-foreground">
+                                No hay predicciones ingresadas por otros jugadores aún.
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {otherPredictions[match.id].map((player) => {
+                                  const pts = calculatePoints(match.goles_a || 0, match.goles_b || 0, player.predA, player.predB);
+                                  return (
+                                    <div key={player.name} className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/60 hover:bg-muted/70 transition-all">
+                                      <div className="flex flex-col">
+                                        <span className="text-sm font-bold text-foreground">{player.name}</span>
+                                        <span className="text-xs text-muted-foreground flex items-center flex-wrap gap-1.5 mt-0.5">
+                                          <span>Predijo:</span>
+                                          <span className="font-mono font-bold text-foreground bg-muted px-1.5 py-0.5 rounded text-[11px]">{player.predA} - {player.predB}</span>
+                                          <span className="text-[10px] text-primary bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                                            {getPointsReason(match.goles_a || 0, match.goles_b || 0, player.predA, player.predB)}
+                                          </span>
+                                        </span>
+                                      </div>
+                                      <span className={`text-sm font-black px-2 py-1 rounded-md ${
+                                        pts === 5 
+                                          ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
+                                          : pts === 3
+                                          ? 'bg-sky-500/10 text-sky-500 border border-sky-500/20'
+                                          : pts === 2
+                                          ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                                          : pts === 1
+                                          ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
+                                          : 'bg-muted text-muted-foreground'
+                                      }`}>
+                                        +{pts} pts
+                                      </span>
                                     </div>
-                                    <span className={`text-sm font-black px-2 py-1 rounded-md ${
-                                      pts === 5 
-                                        ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
-                                        : pts === 3
-                                        ? 'bg-sky-500/10 text-sky-500 border border-sky-500/20'
-                                        : pts === 2
-                                        ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                                        : pts === 1
-                                        ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
-                                        : 'bg-muted text-muted-foreground'
-                                    }`}>
-                                      +{pts} pts
-                                    </span>
-                                  </div>
-                                );
-                              })}
-                            </div>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
                         )}
                       </>
@@ -366,6 +451,28 @@ export default function Fases() {
           )}
         </div>
       </div>
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-card/95 backdrop-blur-md border border-border shadow-2xl rounded-2xl p-4 min-w-[300px] max-w-md animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className={`p-2 rounded-xl ${toast.type === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-destructive/10 text-destructive'}`}>
+            {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          </div>
+          <div className="flex-1 flex flex-col gap-0.5">
+            <span className="text-sm font-bold text-foreground">
+              {toast.type === 'success' ? 'Éxito' : 'Error'}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {toast.message}
+            </span>
+          </div>
+          <button 
+            onClick={() => setToast(prev => ({ ...prev, show: false }))}
+            className="text-muted-foreground hover:text-foreground hover:bg-muted p-1 rounded-lg transition-colors cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -9,7 +9,7 @@ export default function MainLayout() {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'Fases', href: '/fases', icon: Trophy },
+    { name: 'Partidos', href: '/fases', icon: Trophy },
     { name: 'Reglas de la Polla', href: '/reglas', icon: ScrollText },
   ];
 
@@ -49,8 +49,8 @@ export default function MainLayout() {
             </div>
           </div>
 
-          <Link 
-            to="/login" 
+          <Link
+            to="/login"
             onClick={() => {
               localStorage.removeItem('user_uuid');
               localStorage.removeItem('user_name');
@@ -104,7 +104,7 @@ export default function MainLayout() {
                 </Link>
               );
             })}
-            
+
             {/* Mobile User Profile */}
             <div className="flex items-center gap-3 px-3 py-3 mt-4 border-t border-border">
               <div className="w-10 h-10 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center font-black text-primary text-base shrink-0">
@@ -116,8 +116,8 @@ export default function MainLayout() {
               </div>
             </div>
 
-            <Link 
-              to="/login" 
+            <Link
+              to="/login"
               onClick={() => {
                 localStorage.removeItem('user_uuid');
                 localStorage.removeItem('user_name');

@@ -121,7 +121,7 @@ function generateMatches(): MatchMock[] {
       [teams[1], teams[2]]
     ];
 
-    matchups.forEach((teams, matchIdx) => {
+    matchups.forEach((teams) => {
       // Simulate first few matches as finished
       const isFinished = currentMatchId <= 4;
       const score_a = isFinished ? (currentMatchId % 2 === 0 ? 0 : 2) : null;

@@ -7,23 +7,20 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - DATABASE_URL=file:./dev.db
-    command: npm run start:dev
-    depends_on:
-      - frontend
+    volumes:
+      - sqlite_data:/usr/src/app/prisma
+    restart: always
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npm run dev -- --host
+      - "5173:80"
+    restart: always
+
+volumes:
+  sqlite_data:

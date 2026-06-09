@@ -1,5 +1,6 @@
 import { Trophy, Medal, Star, RefreshCw } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 interface LeaderboardUser {
   id: string;
@@ -66,9 +67,18 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-black text-foreground tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Bienvenido a la Polla Mundial. Aquí está la tabla de posiciones actual.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-black text-foreground tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Bienvenido a la Polla Mundial. Aquí está la tabla de posiciones actual.</p>
+        </div>
+        <Link 
+          to="/fases" 
+          className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 text-sm justify-center"
+        >
+          <Trophy className="w-4 h-4" />
+          Ver Partidos
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
