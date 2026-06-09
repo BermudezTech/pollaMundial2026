@@ -80,7 +80,7 @@ export default function Fases() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:3000/matches');
+      const response = await fetch('/api/matches');
       if (!response.ok) {
         throw new Error('Error al cargar los partidos de la base de datos');
       }
@@ -96,7 +96,7 @@ export default function Fases() {
       
       if (userUuid) {
         try {
-          const predResponse = await fetch(`http://localhost:3000/predictions/${userUuid}`);
+          const predResponse = await fetch(`/api/predictions/${userUuid}`);
           if (predResponse.ok) {
             const predData = await predResponse.json();
             predData.forEach((pred: any) => {
@@ -135,7 +135,7 @@ export default function Fases() {
     if (isExpanding && !otherPredictions[matchId]) {
       setLoadingOthers(prev => ({ ...prev, [matchId]: true }));
       try {
-        const response = await fetch(`http://localhost:3000/predictions/match/${matchId}`);
+        const response = await fetch(`/api/predictions/match/${matchId}`);
         if (response.ok) {
           const data = await response.json();
           setOtherPredictions(prev => ({ ...prev, [matchId]: data }));
@@ -164,7 +164,7 @@ export default function Fases() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/predictions', {
+      const response = await fetch('/api/predictions', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

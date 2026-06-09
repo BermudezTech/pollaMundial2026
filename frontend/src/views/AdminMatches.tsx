@@ -12,7 +12,7 @@ export default function AdminMatches() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:3000/matches/all');
+      const response = await fetch('/api/matches/all');
       if (!response.ok) {
         throw new Error('Error al cargar partidos reales del servidor');
       }
@@ -53,7 +53,7 @@ export default function AdminMatches() {
     const score_b = scoreBStr === '' ? null : parseInt(scoreBStr);
 
     try {
-      const response = await fetch(`http://localhost:3000/matches/${matchId}`, {
+      const response = await fetch(`/api/matches/${matchId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

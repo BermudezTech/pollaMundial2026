@@ -20,7 +20,7 @@ export default function Dashboard() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:3000/users/leaderboard');
+      const response = await fetch('/api/users/leaderboard');
       if (!response.ok) {
         throw new Error('Error al obtener la tabla de posiciones');
       }
