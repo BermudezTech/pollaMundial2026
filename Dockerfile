@@ -40,9 +40,11 @@ COPY --from=backend-builder /usr/src/app/backend/prisma/users.json ./prisma/
 # Copy frontend build to backend's dist/client directory
 COPY --from=frontend-builder /usr/src/app/frontend/dist ./dist/client
 
+RUN mkdir -p /usr/src/app/data
+
 EXPOSE 3000
 
 ENV NODE_ENV=production
 
 # Push the schema to the SQLite database, run database seed, then start the server
-CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node prisma/seed.js && node dist/src/main"]
+CMD ["sh", "-c", "npx prisma db push && node prisma/seed.js && node dist/src/main"]

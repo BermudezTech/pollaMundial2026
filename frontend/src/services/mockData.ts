@@ -79,8 +79,7 @@ export function calculateMatchPoints(realA: number, realB: number, predA: number
   const predWinner = predDiff > 0 ? 1 : predDiff < 0 ? -1 : 0;
   
   if (realWinner === predWinner) {
-    if (realDiff === predDiff) return 3; // Winner + Diff
-    return 2; // Winner only
+    return 3; // Correct winner or draw
   }
   
   if (realA === predA || realB === predB) return 1; // Individual goals

@@ -36,7 +36,6 @@ function getPointsReason(realA: number, realB: number, predA: number, predB: num
   const predWinner = predDiff > 0 ? 1 : predDiff < 0 ? -1 : 0;
   
   if (realWinner === predWinner) {
-    if (realDiff === predDiff) return 'Ganador/Empate + Diferencia';
     return 'Ganador o Empate Seco';
   }
   
@@ -259,6 +258,10 @@ export default function Fases() {
                 puntosGanados = calculatePoints(match.goles_a, match.goles_b, userPredA, userPredB);
               }
 
+              const matchDate = new Date(match.fecha_hora);
+              const now = new Date();
+              const isLocked = match.estado === 'FINALIZADO' || (matchDate.getTime() - now.getTime() <= 300000);
+
               return (
                 <div key={match.id} className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-lg transition-transform hover:-translate-y-1">
                   {selectedFaseId !== null && selectedFaseId >= 13 && (
@@ -295,7 +298,7 @@ export default function Fases() {
                       <span className="text-lg font-bold text-foreground text-center leading-tight truncate w-full px-2">{teamAName}</span>
                     </div>
 
-                    {match.estado === 'PROGRAMADO' ? (
+                    {match.estado === 'PROGRAMADO' && !isLocked ? (
                       <div className="flex items-center gap-3 shrink-0 bg-muted/30 px-4 py-3 rounded-2xl border border-border shadow-inner w-full sm:w-auto justify-center z-20">
                         <input 
                           type="number" 
@@ -321,13 +324,13 @@ export default function Fases() {
                       <div className="flex flex-col items-center gap-2 shrink-0 z-20">
                         <div className="flex items-center gap-4 bg-primary/10 px-6 py-3 rounded-2xl border border-primary/20 shadow-inner w-full sm:w-auto justify-center">
                           <div className="flex items-center justify-center text-4xl font-black text-primary">
-                            {match.goles_a}
+                            {match.estado === 'FINALIZADO' ? match.goles_a : (userPredA ?? '-')}
                           </div>
                           <div className="bg-primary/20 text-primary font-black text-xs px-2 py-1 rounded-md">
-                            FINAL
+                            {match.estado === 'FINALIZADO' ? 'FINAL' : 'EN VIVO'}
                           </div>
                           <div className="flex items-center justify-center text-4xl font-black text-primary">
-                            {match.goles_b}
+                            {match.estado === 'FINALIZADO' ? match.goles_b : (userPredB ?? '-')}
                           </div>
                         </div>
                       </div>
@@ -346,7 +349,7 @@ export default function Fases() {
                   </div>
                   
                   <div className="px-6 py-4 bg-card border-t border-border flex flex-col gap-4">
-                    {match.estado === 'PROGRAMADO' ? (
+                    {match.estado === 'PROGRAMADO' && !isLocked ? (
                       <button 
                         onClick={() => {
                           const predA = (document.getElementById(`pred-a-${match.id}`) as HTMLInputElement)?.value || '';
@@ -369,15 +372,22 @@ export default function Fases() {
                               </span>
                             )}
                           </div>
-                          <div className="flex flex-col items-end">
-                            <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Puntos Obtenidos</span>
-                            <div className="flex items-center gap-1">
-                              <span className={`text-xl font-black ${puntosGanados > 0 ? 'text-emerald-500' : 'text-muted-foreground'}`}>
-                                +{puntosGanados}
-                              </span>
-                              <span className="text-sm font-bold text-muted-foreground">pts</span>
+                          {match.estado === 'FINALIZADO' ? (
+                            <div className="flex flex-col items-end">
+                              <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Puntos Obtenidos</span>
+                              <div className="flex items-center gap-1">
+                                <span className={`text-xl font-black ${puntosGanados > 0 ? 'text-emerald-500' : 'text-muted-foreground'}`}>
+                                  +{puntosGanados}
+                                </span>
+                                <span className="text-sm font-bold text-muted-foreground">pts</span>
+                              </div>
                             </div>
-                          </div>
+                          ) : (
+                            <div className="flex flex-col items-end text-muted-foreground">
+                              <span className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1"><Lock className="w-3 h-3"/> Cerrado</span>
+                              <span className="text-sm font-bold">Partido en curso</span>
+                            </div>
+                          )}
                         </div>
 
                         <button

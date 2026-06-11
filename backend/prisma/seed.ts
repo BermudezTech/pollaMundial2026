@@ -120,8 +120,6 @@ async function main() {
         where: { email: user.email },
         update: {
           nombre: user.nombre,
-          // Actualizamos la contraseña para asegurarnos que esté igual al email (o por si cambia el hash)
-          contrasena_hash: contrasena_hash,
         },
         create: {
           nombre: user.nombre,

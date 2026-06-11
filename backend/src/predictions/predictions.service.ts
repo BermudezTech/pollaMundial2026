@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -18,6 +18,23 @@ export class PredictionsService {
     golesB: number,
     clasifica?: string | null,
   ) {
+    const match = await this.prisma.partido.findUnique({
+      where: { id: matchId },
+    });
+
+    if (!match) {
+      throw new BadRequestException('Partido no encontrado');
+    }
+
+    if (match.estado === 'FINALIZADO') {
+      throw new BadRequestException('El partido ya ha finalizado');
+    }
+
+    const matchDate = new Date(match.fecha_hora);
+    const now = new Date();
+    if (matchDate.getTime() - now.getTime() <= 300000) {
+      throw new BadRequestException('El tiempo para predecir este partido ha expirado');
+    }
     const existing = await this.prisma.prediccion.findFirst({
       where: {
         usuario_id: userId,

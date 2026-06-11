@@ -19,10 +19,10 @@ export default function Reglas() {
         </div>
         <div className="p-6 space-y-6">
           <p className="text-foreground leading-relaxed">
-            Cada jugador realiza un aporte de <span className="font-bold text-emerald-500">100.000 COP</span> al inicio del torneo. 
+            Cada jugador realiza un aporte de <span className="font-bold text-emerald-500">100.000 COP</span> al inicio del torneo.
             Actualmente somos <span className="font-bold">9 participantes</span>, por lo que el pozo total acumulado es de <span className="font-bold text-emerald-500">900.000 COP</span>.
           </p>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-background border border-border rounded-xl p-4 flex flex-col items-center justify-center gap-2 text-center shadow-sm">
               <Trophy className="text-yellow-500 w-8 h-8" />
@@ -68,23 +68,15 @@ export default function Reglas() {
                   <td className="px-4 py-4 font-bold text-primary">Marcador Exacto</td>
                   <td className="px-4 py-4 text-center font-black text-lg">5</td>
                   <td className="px-4 py-4 text-muted-foreground">
-                    Acertaste el resultado idéntico del partido.<br/>
+                    Acertaste el resultado idéntico del partido.<br />
                     <span className="italic text-xs">Ej: Real (2 - 1) | Tu Predicción (2 - 1)</span>
                   </td>
                 </tr>
                 <tr className="hover:bg-muted/20">
-                  <td className="px-4 py-4 font-bold text-primary">Ganador/Empate + Diferencia</td>
+                  <td className="px-4 py-4 font-bold text-primary">Ganador o Empate Seco</td>
                   <td className="px-4 py-4 text-center font-black text-lg">3</td>
                   <td className="px-4 py-4 text-muted-foreground">
-                    Acertaste quién gana y la diferencia exacta de goles, pero no el marcador final.<br/>
-                    <span className="italic text-xs">Ej: Real (2 - 1) (dif. +1) | Tu Predicción (3 - 2)</span>
-                  </td>
-                </tr>
-                <tr className="hover:bg-muted/20">
-                  <td className="px-4 py-4 font-bold text-primary">Ganador o Empate Seco</td>
-                  <td className="px-4 py-4 text-center font-black text-lg">2</td>
-                  <td className="px-4 py-4 text-muted-foreground">
-                    Acertaste quién ganaba o si empataban, pero fallaste la diferencia y los goles.<br/>
+                    Acertaste quién ganaba o si empataban, pero fallaste el marcador exacto.<br />
                     <span className="italic text-xs">Ej: Real (2 - 1) | Tu Predicción (1 - 0)</span>
                   </td>
                 </tr>
@@ -92,7 +84,7 @@ export default function Reglas() {
                   <td className="px-4 py-4 font-bold text-primary">Acierto de Goles Individual</td>
                   <td className="px-4 py-4 text-center font-black text-lg">1</td>
                   <td className="px-4 py-4 text-muted-foreground">
-                    Fallaste ganador y empate, pero adivinaste la cantidad exacta de goles de uno de los equipos.<br/>
+                    Fallaste ganador y empate, pero adivinaste la cantidad exacta de goles de uno de los equipos.<br />
                     <span className="italic text-xs">Ej: Real (0 - 2) | Tu Predicción (1 - 2) (Acertaste los 2 goles del visitante)</span>
                   </td>
                 </tr>
@@ -114,7 +106,7 @@ export default function Reglas() {
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
               <li>En fases de eliminación no hay empates reales, pero debes predecir un marcador (ej. 1 - 1) y <strong>seleccionar qué equipo clasifica</strong>.</li>
               <li>El marcador para cálculo de goles será el del tiempo reglamentario (ej. 1 - 1).</li>
-              <li>Si aciertas qué equipo clasificaba por penaltis, se te otorgan <strong>2 puntos</strong> adicionales (como Ganador Seco).</li>
+              <li>Si aciertas qué equipo clasificaba por penaltis, se te otorgan <strong>2 puntos</strong> adicionales.</li>
             </ul>
           </div>
 

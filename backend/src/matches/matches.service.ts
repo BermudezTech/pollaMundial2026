@@ -54,6 +54,33 @@ export class MatchesService {
     }));
   }
 
+  async getMatchesToday() {
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bogota' });
+    const todayStr = formatter.format(now);
+
+    const partidos = await this.prisma.partido.findMany({
+      orderBy: { fecha_hora: 'asc' },
+      include: { fase: { select: { nombre: true } } }
+    });
+
+    const todayMatches = partidos.filter(p => {
+      const matchDateStr = formatter.format(p.fecha_hora);
+      return matchDateStr === todayStr;
+    });
+
+    return todayMatches.map((p) => ({
+      id: p.id,
+      fase_nombre: p.fase.nombre,
+      equipo_a: p.equipo_a_real || p.equipo_a_placeholder,
+      equipo_b: p.equipo_b_real || p.equipo_b_placeholder,
+      fecha_hora: p.fecha_hora.toISOString(),
+      estado: p.estado,
+      score_a: p.goles_a,
+      score_b: p.goles_b,
+    }));
+  }
+
   async updateMatchScore(
     id: number,
     golesA: number | null,

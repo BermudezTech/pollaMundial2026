@@ -52,10 +52,8 @@ export class UsersService {
           if (golesAReal === golesAPred && golesBReal === golesBPred) {
             puntos = 5;
             esMarcadorExacto = true;
-          } else if (ganadorReal === ganadorPred && diffReal === diffPred) {
-            puntos = 3;
           } else if (ganadorReal === ganadorPred) {
-            puntos = 2;
+            puntos = 3;
           } else if (golesAReal === golesAPred || golesBReal === golesBPred) {
             puntos = 1;
           }

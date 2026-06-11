@@ -1,4 +1,4 @@
-import { Trophy, Medal, Star, RefreshCw } from 'lucide-react';
+import { Trophy, Medal, Star, RefreshCw, CalendarClock, Lock, BookOpen } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -16,16 +16,34 @@ export default function Dashboard() {
 
   const loggedInUserUuid = localStorage.getItem('user_uuid');
 
+  const [todayMatches, setTodayMatches] = useState<any[]>([]);
+  const [userPredictions, setUserPredictions] = useState<Record<number, any>>({});
+
   const fetchLeaderboard = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/users/leaderboard');
-      if (!response.ok) {
+      const [lbRes, todayRes, predRes] = await Promise.all([
+        fetch('/api/users/leaderboard'),
+        fetch('/api/matches/today'),
+        loggedInUserUuid ? fetch(`/api/predictions/${loggedInUserUuid}`) : Promise.resolve(null)
+      ]);
+
+      if (!lbRes.ok) {
         throw new Error('Error al obtener la tabla de posiciones');
       }
-      const data = await response.json();
-      setLeaderboard(data);
+      setLeaderboard(await lbRes.json());
+
+      if (todayRes.ok) {
+        setTodayMatches(await todayRes.json());
+      }
+
+      if (predRes && predRes.ok) {
+        const preds = await predRes.json();
+        const predMap: Record<number, any> = {};
+        preds.forEach((p: any) => { predMap[p.partido_id] = p; });
+        setUserPredictions(predMap);
+      }
     } catch (err: any) {
       setError(err.message || 'Error de conexión.');
     } finally {
@@ -72,13 +90,22 @@ export default function Dashboard() {
           <h1 className="text-3xl font-black text-foreground tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">Bienvenido a la Polla Mundial. Aquí está la tabla de posiciones actual.</p>
         </div>
-        <Link 
-          to="/fases" 
-          className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 text-sm justify-center"
-        >
-          <Trophy className="w-4 h-4" />
-          Ver Partidos
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link 
+            to="/reglas" 
+            className="shrink-0 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold px-4 py-2.5 rounded-xl transition-all border border-border shadow-sm flex items-center gap-2 text-sm justify-center"
+          >
+            <BookOpen className="w-4 h-4" />
+            Reglas del Juego
+          </Link>
+          <Link 
+            to="/fases" 
+            className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 text-sm justify-center"
+          >
+            <Trophy className="w-4 h-4" />
+            Ver Partidos
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -117,48 +144,54 @@ export default function Dashboard() {
               No hay participantes registrados todavía.
             </div>
           ) : (
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse table-fixed sm:table-auto">
               <thead>
-                <tr className="bg-muted/50 text-muted-foreground text-sm font-medium border-b border-border">
-                  <th className="px-6 py-4">Posición</th>
-                  <th className="px-6 py-4">Participante</th>
-                  <th className="px-6 py-4 text-right">Pts</th>
-                  <th className="px-6 py-4 text-right">Exactos</th>
+                <tr className="bg-muted/55 text-muted-foreground text-xs sm:text-sm font-medium border-b border-border">
+                  <th className="px-2.5 py-3 sm:px-6 sm:py-4 w-[65px] sm:w-auto">
+                    <span className="hidden sm:inline">Posición</span>
+                    <span className="sm:hidden">Pos.</span>
+                  </th>
+                  <th className="px-2.5 py-3 sm:px-6 sm:py-4">Participante</th>
+                  <th className="px-2.5 py-3 sm:px-6 sm:py-4 text-right w-[60px] sm:w-auto">Pts</th>
+                  <th className="px-2.5 py-3 sm:px-6 sm:py-4 text-right w-[75px] sm:w-auto">
+                    <span className="hidden sm:inline">Exactos</span>
+                    <span className="sm:hidden">Ex.</span>
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border text-sm">
                 {leaderboard.map((user, index) => {
                   const isCurrentUser = user.id === loggedInUserUuid;
                   return (
                     <tr key={user.id} className={`hover:bg-muted/50 transition-colors ${isCurrentUser ? 'bg-primary/5 font-semibold' : ''}`}>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          {index === 0 && <Medal className="text-yellow-500 w-5 h-5" />}
-                          {index === 1 && <Medal className="text-neutral-400 w-5 h-5" />}
-                          {index === 2 && <Medal className="text-amber-700 w-5 h-5" />}
-                          <span className={`font-black ${index < 3 ? 'text-lg text-foreground' : 'text-muted-foreground'}`}>
+                      <td className="px-2.5 py-3 sm:px-6 sm:py-4">
+                        <div className="flex items-center gap-1 sm:gap-2">
+                          {index === 0 && <Medal className="text-yellow-500 w-4 h-4 sm:w-5 sm:h-5 shrink-0" />}
+                          {index === 1 && <Medal className="text-neutral-400 w-4 h-4 sm:w-5 sm:h-5 shrink-0" />}
+                          {index === 2 && <Medal className="text-amber-700 w-4 h-4 sm:w-5 sm:h-5 shrink-0" />}
+                          <span className={`font-black ${index < 3 ? 'text-base sm:text-lg text-foreground' : 'text-muted-foreground'}`}>
                             {index + 1}
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center font-bold text-primary text-xs">
+                      <td className="px-2.5 py-3 sm:px-6 sm:py-4 overflow-hidden">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-muted border border-border flex items-center justify-center font-bold text-primary text-[10px] sm:text-xs shrink-0">
                             {user.nombre.charAt(0)}
                           </div>
-                          <span className="font-semibold text-foreground">
+                          <span className="font-semibold text-foreground truncate max-w-[85px] xs:max-w-[150px] sm:max-w-none">
                             {isCurrentUser ? `${user.nombre} (Tú)` : user.nombre}
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="inline-flex items-center gap-1 font-black text-primary bg-primary/10 px-3 py-1 rounded-full">
+                      <td className="px-2.5 py-3 sm:px-6 sm:py-4 text-right">
+                        <div className="inline-flex items-center gap-1 font-black text-primary bg-primary/10 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm">
                           {user.total_puntos}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="inline-flex items-center gap-1 text-muted-foreground">
-                          <Star className="w-4 h-4 text-muted-foreground" />
+                      <td className="px-2.5 py-3 sm:px-6 sm:py-4 text-right">
+                        <div className="inline-flex items-center gap-1 text-muted-foreground text-xs sm:text-sm">
+                          <Star className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                           {user.marcadores_exactos}
                         </div>
                       </td>
@@ -167,6 +200,79 @@ export default function Dashboard() {
                 })}
               </tbody>
             </table>
+          )}
+        </div>
+      </div>
+
+      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl mt-8">
+        <div className="p-6 border-b border-border bg-muted/30 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <CalendarClock className="text-primary w-6 h-6" />
+            <h2 className="text-xl font-bold text-foreground">Partidos de Hoy</h2>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          {todayMatches.length === 0 ? (
+            <div className="text-center text-muted-foreground py-8">
+              No hay partidos programados para hoy.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {todayMatches.map((match) => {
+                const pred = userPredictions[match.id];
+                const matchDate = new Date(match.fecha_hora);
+                const isLocked = match.estado === 'FINALIZADO' || (matchDate.getTime() - new Date().getTime() <= 300000);
+                
+                return (
+                  <div key={match.id} className="bg-muted/30 border border-border rounded-xl p-4 flex flex-col gap-3">
+                    <div className="flex justify-between items-center text-xs font-semibold text-muted-foreground">
+                      <span className="uppercase tracking-wider">{match.fase_nombre}</span>
+                      <span>{matchDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center bg-background rounded-lg p-3 border border-border shadow-inner">
+                      <div className="flex flex-col items-center flex-1 gap-1">
+                        <span className="font-bold text-sm text-center truncate w-full px-1">{match.equipo_a}</span>
+                        {match.estado === 'FINALIZADO' && <span className="text-lg font-black text-primary">{match.score_a}</span>}
+                      </div>
+                      <div className="text-xs font-black text-muted-foreground px-2">VS</div>
+                      <div className="flex flex-col items-center flex-1 gap-1">
+                        <span className="font-bold text-sm text-center truncate w-full px-1">{match.equipo_b}</span>
+                        {match.estado === 'FINALIZADO' && <span className="text-lg font-black text-primary">{match.score_b}</span>}
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center pt-2 border-t border-border">
+                      <div className="flex items-center gap-2">
+                        {pred ? (
+                          <div className="flex flex-col">
+                            <span className="text-[10px] uppercase font-bold text-muted-foreground">Tu Predicción</span>
+                            <span className="text-sm font-black text-primary">{pred.prediccion_goles_a} - {pred.prediccion_goles_b}</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs font-medium text-destructive bg-destructive/10 px-2 py-1 rounded-md">
+                            Sin predecir
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center">
+                        {isLocked ? (
+                          <span className="text-xs font-bold uppercase text-muted-foreground flex items-center gap-1">
+                            <Lock className="w-3 h-3" /> Cerrado
+                          </span>
+                        ) : (
+                          <Link to="/fases" className="text-xs font-bold uppercase text-primary hover:underline">
+                            {pred ? 'Editar' : 'Predecir ahora'}
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>

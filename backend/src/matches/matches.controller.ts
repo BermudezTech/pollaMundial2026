@@ -15,6 +15,11 @@ export class MatchesController {
     return this.matchesService.getAllMatches();
   }
 
+  @Get('today')
+  async getMatchesToday() {
+    return this.matchesService.getMatchesToday();
+  }
+
   @Put(':id')
   async updateMatch(
     @Param('id', ParseIntPipe) id: number,
