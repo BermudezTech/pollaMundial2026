@@ -19,9 +19,12 @@ export default function MainLayout() {
     <div className="h-screen bg-background text-foreground flex overflow-hidden">
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col w-64 border-r border-border bg-card/50 p-4 shrink-0">
-        <div className="text-2xl font-black italic tracking-tighter text-primary mb-8 mt-4 px-2">
-          POLLA MUNDIAL
-        </div>
+        <Link to="/dashboard" className="flex items-center gap-3 mb-8 mt-4 px-2 hover:opacity-85 transition-opacity">
+          <img src="/2026FIFALOGO.webp" alt="FIFA 2026" className="w-8 h-8 object-contain shrink-0" />
+          <div className="text-2xl font-black italic tracking-tighter text-primary">
+            POLLA MUNDIAL
+          </div>
+        </Link>
         <nav className="flex-1 space-y-2">
           {navigation.map((item) => {
             const isActive = location.pathname.startsWith(item.href);
@@ -73,9 +76,12 @@ export default function MainLayout() {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card/80 sticky top-0 z-50 backdrop-blur-md">
-          <div className="text-xl font-black italic tracking-tighter text-primary">
-            POLLA MUNDIAL
-          </div>
+          <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-85 transition-opacity">
+            <img src="/2026FIFALOGO.webp" alt="FIFA 2026" className="w-7 h-7 object-contain shrink-0" />
+            <div className="text-xl font-black italic tracking-tighter text-primary">
+              POLLA MUNDIAL
+            </div>
+          </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <button
@@ -133,7 +139,7 @@ export default function MainLayout() {
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-background">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 bg-background stadium-glow">
           <Outlet />
         </main>
       </div>

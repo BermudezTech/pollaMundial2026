@@ -29,6 +29,9 @@ export class MatchesController {
       goles_b: number | null;
       estado: string;
       clasifica_real?: string | null;
+      equipo_a_real?: string | null;
+      equipo_b_real?: string | null;
+      fecha_hora?: string | null;
     },
   ) {
     return this.matchesService.updateMatchScore(
@@ -37,6 +40,9 @@ export class MatchesController {
       body.goles_b,
       body.estado,
       body.clasifica_real,
+      body.equipo_a_real,
+      body.equipo_b_real,
+      body.fecha_hora,
     );
   }
 }

@@ -19,6 +19,13 @@ export default function Dashboard() {
   const [todayMatches, setTodayMatches] = useState<any[]>([]);
   const [userPredictions, setUserPredictions] = useState<Record<number, any>>({});
 
+  const scrollToTodayMatches = () => {
+    const element = document.getElementById('today-matches-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const fetchLeaderboard = async () => {
     setIsLoading(true);
     setError(null);
@@ -85,41 +92,42 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black text-foreground tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">Bienvenido a la Polla Mundial. Aquí está la tabla de posiciones actual.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link 
-            to="/reglas" 
-            className="shrink-0 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold px-4 py-2.5 rounded-xl transition-all border border-border shadow-sm flex items-center gap-2 text-sm justify-center"
-          >
-            <BookOpen className="w-4 h-4" />
-            Reglas del Juego
-          </Link>
-          <Link 
-            to="/fases" 
-            className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 text-sm justify-center"
-          >
-            <Trophy className="w-4 h-4" />
-            Ver Partidos
-          </Link>
-        </div>
+      <div className="flex flex-wrap items-center gap-2 justify-end w-full">
+        <button 
+          onClick={scrollToTodayMatches}
+          className="shrink-0 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold px-4 py-2.5 rounded-xl transition-all border border-border shadow-sm flex items-center gap-2 text-sm justify-center cursor-pointer"
+        >
+          <CalendarClock className="w-4 h-4" />
+          Partidos de Hoy
+        </button>
+        <Link 
+          to="/reglas" 
+          className="shrink-0 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold px-4 py-2.5 rounded-xl transition-all border border-border shadow-sm flex items-center gap-2 text-sm justify-center"
+        >
+          <BookOpen className="w-4 h-4" />
+          Reglas
+        </Link>
+        <Link 
+          to="/fases" 
+          className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 text-sm justify-center"
+        >
+          <Trophy className="w-4 h-4" />
+          Ver Partidos
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-card border border-border rounded-xl p-6 flex flex-col gap-2">
-          <div className="text-muted-foreground font-medium">Tu Posición</div>
-          <div className="text-3xl font-black text-primary">{userPos}</div>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
+        <div className="bg-card border border-border rounded-xl p-3 sm:p-6 flex flex-col gap-1 sm:gap-2 justify-center text-center sm:text-left min-w-0">
+          <div className="text-muted-foreground text-[10px] xs:text-xs sm:text-sm font-semibold truncate">Tu Posición</div>
+          <div className="text-base xs:text-lg sm:text-3xl font-black text-primary truncate">{userPos}</div>
         </div>
-        <div className="bg-card border border-border rounded-xl p-6 flex flex-col gap-2">
-          <div className="text-muted-foreground font-medium">Tus Puntos</div>
-          <div className="text-3xl font-black text-primary">{userStats.total_puntos} pts</div>
+        <div className="bg-card border border-border rounded-xl p-3 sm:p-6 flex flex-col gap-1 sm:gap-2 justify-center text-center sm:text-left min-w-0">
+          <div className="text-muted-foreground text-[10px] xs:text-xs sm:text-sm font-semibold truncate">Tus Puntos</div>
+          <div className="text-base xs:text-lg sm:text-3xl font-black text-primary truncate">{userStats.total_puntos} <span className="text-[10px] xs:text-xs sm:text-sm font-medium">pts</span></div>
         </div>
-        <div className="bg-card border border-border rounded-xl p-6 flex flex-col gap-2">
-          <div className="text-muted-foreground font-medium">Marcadores Exactos</div>
-          <div className="text-3xl font-black text-primary">{userStats.marcadores_exactos}</div>
+        <div className="bg-card border border-border rounded-xl p-3 sm:p-6 flex flex-col gap-1 sm:gap-2 justify-center text-center sm:text-left min-w-0">
+          <div className="text-muted-foreground text-[10px] xs:text-xs sm:text-sm font-semibold truncate">Exactos</div>
+          <div className="text-base xs:text-lg sm:text-3xl font-black text-primary truncate">{userStats.marcadores_exactos}</div>
         </div>
       </div>
 
@@ -204,7 +212,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl mt-8">
+      <div id="today-matches-section" className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl mt-8">
         <div className="p-6 border-b border-border bg-muted/30 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <CalendarClock className="text-primary w-6 h-6" />
@@ -231,14 +239,14 @@ export default function Dashboard() {
                       <span>{matchDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                     
-                    <div className="flex justify-between items-center bg-background rounded-lg p-3 border border-border shadow-inner">
-                      <div className="flex flex-col items-center flex-1 gap-1">
-                        <span className="font-bold text-sm text-center truncate w-full px-1">{match.equipo_a}</span>
+                    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 bg-background rounded-lg p-3 border border-border shadow-inner w-full">
+                      <div className="flex flex-col items-center min-w-0 gap-1">
+                        <span className="font-bold text-xs sm:text-sm text-foreground leading-tight text-center break-words w-full px-0.5">{match.equipo_a}</span>
                         {match.estado === 'FINALIZADO' && <span className="text-lg font-black text-primary">{match.score_a}</span>}
                       </div>
-                      <div className="text-xs font-black text-muted-foreground px-2">VS</div>
-                      <div className="flex flex-col items-center flex-1 gap-1">
-                        <span className="font-bold text-sm text-center truncate w-full px-1">{match.equipo_b}</span>
+                      <div className="text-[10px] font-black text-muted-foreground px-1 self-center">VS</div>
+                      <div className="flex flex-col items-center min-w-0 gap-1">
+                        <span className="font-bold text-xs sm:text-sm text-foreground leading-tight text-center break-words w-full px-0.5">{match.equipo_b}</span>
                         {match.estado === 'FINALIZADO' && <span className="text-lg font-black text-primary">{match.score_b}</span>}
                       </div>
                     </div>
@@ -263,7 +271,7 @@ export default function Dashboard() {
                             <Lock className="w-3 h-3" /> Cerrado
                           </span>
                         ) : (
-                          <Link to="/fases" className="text-xs font-bold uppercase text-primary hover:underline">
+                          <Link to={`/fases?matchId=${match.id}&faseId=${match.fase_id}`} className="text-xs font-bold uppercase text-primary hover:underline">
                             {pred ? 'Editar' : 'Predecir ahora'}
                           </Link>
                         )}

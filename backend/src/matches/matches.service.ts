@@ -46,6 +46,10 @@ export class MatchesService {
       fase_id: p.fase_id,
       equipo_a: p.equipo_a_real || p.equipo_a_placeholder,
       equipo_b: p.equipo_b_real || p.equipo_b_placeholder,
+      equipo_a_placeholder: p.equipo_a_placeholder,
+      equipo_b_placeholder: p.equipo_b_placeholder,
+      equipo_a_real: p.equipo_a_real,
+      equipo_b_real: p.equipo_b_real,
       fecha_hora: p.fecha_hora.toISOString(),
       estado: p.estado,
       score_a: p.goles_a,
@@ -72,6 +76,7 @@ export class MatchesService {
     return todayMatches.map((p) => ({
       id: p.id,
       fase_nombre: p.fase.nombre,
+      fase_id: p.fase_id,
       equipo_a: p.equipo_a_real || p.equipo_a_placeholder,
       equipo_b: p.equipo_b_real || p.equipo_b_placeholder,
       fecha_hora: p.fecha_hora.toISOString(),
@@ -87,6 +92,9 @@ export class MatchesService {
     golesB: number | null,
     estado: string,
     clasificaReal?: string | null,
+    equipoAReal?: string | null,
+    equipoBReal?: string | null,
+    fechaHora?: string | null,
   ) {
     return this.prisma.partido.update({
       where: { id },
@@ -95,6 +103,9 @@ export class MatchesService {
         goles_b: golesB,
         estado,
         clasifica_real: clasificaReal ?? null,
+        equipo_a_real: equipoAReal !== undefined ? equipoAReal : undefined,
+        equipo_b_real: equipoBReal !== undefined ? equipoBReal : undefined,
+        fecha_hora: fechaHora ? new Date(fechaHora) : undefined,
       },
     });
   }

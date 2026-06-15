@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { CalendarClock, ChevronDown, ChevronUp, Users, Lock, RefreshCw, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { calculateMatchPoints } from '../services/mockData';
 
@@ -48,6 +49,10 @@ function getPointsReason(realA: number, realB: number, predA: number, predB: num
 
 
 export default function Fases() {
+  const [searchParams] = useSearchParams();
+  const paramFaseId = searchParams.get('faseId');
+  const paramMatchId = searchParams.get('matchId');
+
   const [fases, setFases] = useState<Fase[]>([]);
   const [selectedFaseId, setSelectedFaseId] = useState<number | null>(null);
   const [expandedMatches, setExpandedMatches] = useState<Record<number, boolean>>({});
@@ -87,7 +92,8 @@ export default function Fases() {
       setFases(data);
 
       if (data.length > 0 && selectedFaseId === null) {
-        setSelectedFaseId(data[0].id);
+        const initialFase = paramFaseId ? parseInt(paramFaseId) : data[0].id;
+        setSelectedFaseId(initialFase);
       }
 
       const predictions: Record<number, { predA: number; predB: number }> = {};
@@ -121,8 +127,41 @@ export default function Fases() {
     loadFases();
   }, []);
 
+  useEffect(() => {
+    if (paramFaseId) {
+      setSelectedFaseId(parseInt(paramFaseId));
+    }
+  }, [paramFaseId]);
+
+  useEffect(() => {
+    if (paramMatchId && !isLoading) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById(`partido-card-${paramMatchId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('ring-2', 'ring-accent');
+          setTimeout(() => {
+            element.classList.remove('ring-2', 'ring-accent');
+          }, 3000);
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [paramMatchId, isLoading, selectedFaseId]);
+
   const selectedFase = useMemo(() => fases.find(f => f.id === selectedFaseId), [selectedFaseId, fases]);
   const phaseMatches = useMemo(() => selectedFase?.partidos || [], [selectedFase]);
+
+  const isPhaseActive = useMemo(() => {
+    if (selectedFaseId === null) return false;
+    if (selectedFaseId < 13) return true;
+    const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]{2}/u;
+    return phaseMatches.some(match => {
+      const teamA = match.equipo_a_real || match.equipo_a_placeholder || '';
+      const teamB = match.equipo_b_real || match.equipo_b_placeholder || '';
+      return emojiRegex.test(teamA) || emojiRegex.test(teamB);
+    });
+  }, [selectedFaseId, phaseMatches]);
 
   const [otherPredictions, setOtherPredictions] = useState<Record<number, { name: string; predA: number; predB: number }[]>>({});
   const [loadingOthers, setLoadingOthers] = useState<Record<number, boolean>>({});
@@ -263,8 +302,8 @@ export default function Fases() {
               const isLocked = match.estado === 'FINALIZADO' || (matchDate.getTime() - now.getTime() <= 300000);
 
               return (
-                <div key={match.id} className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-lg transition-transform hover:-translate-y-1">
-                  {selectedFaseId !== null && selectedFaseId >= 13 && (
+                <div key={match.id} id={`partido-card-${match.id}`} className="relative bg-card border border-border rounded-2xl overflow-hidden shadow-lg transition-transform hover:-translate-y-1">
+                  {selectedFaseId !== null && selectedFaseId >= 13 && !isPhaseActive && (
                     <div className="absolute inset-0 bg-background/50 backdrop-blur-[3px] z-30 flex flex-col items-center justify-center text-center p-6 select-none">
                       <div className="bg-card/90 border border-border rounded-2xl p-6 shadow-xl max-w-xs flex flex-col items-center gap-3">
                         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -306,7 +345,7 @@ export default function Fases() {
                           id={`pred-a-${match.id}`}
                           defaultValue={userPredA ?? ''}
                           className="w-14 h-14 bg-background border border-border rounded-xl text-center text-2xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-inner"
-                          placeholder="0"
+                          placeholder="-"
                         />
                         <div className="bg-muted border border-border text-muted-foreground font-black text-xs px-2 py-1 rounded-md">
                           VS
@@ -317,7 +356,7 @@ export default function Fases() {
                           id={`pred-b-${match.id}`}
                           defaultValue={userPredB ?? ''}
                           className="w-14 h-14 bg-background border border-border rounded-xl text-center text-2xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-inner"
-                          placeholder="0"
+                          placeholder="-"
                         />
                       </div>
                     ) : (
@@ -419,7 +458,8 @@ export default function Fases() {
                             ) : (
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 {otherPredictions[match.id].map((player) => {
-                                  const pts = calculatePoints(match.goles_a || 0, match.goles_b || 0, player.predA, player.predB);
+                                  const showPts = match.estado === 'FINALIZADO' && match.goles_a !== null && match.goles_b !== null;
+                                  const pts = showPts ? calculatePoints(match.goles_a!, match.goles_b!, player.predA, player.predB) : 0;
                                   return (
                                     <div key={player.name} className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/60 hover:bg-muted/70 transition-all">
                                       <div className="flex flex-col">
@@ -427,24 +467,28 @@ export default function Fases() {
                                         <span className="text-xs text-muted-foreground flex items-center flex-wrap gap-1.5 mt-0.5">
                                           <span>Predijo:</span>
                                           <span className="font-mono font-bold text-foreground bg-muted px-1.5 py-0.5 rounded text-[11px]">{player.predA} - {player.predB}</span>
-                                          <span className="text-[10px] text-primary bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
-                                            {getPointsReason(match.goles_a || 0, match.goles_b || 0, player.predA, player.predB)}
-                                          </span>
+                                          {showPts && (
+                                            <span className="text-[10px] text-primary bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                                              {getPointsReason(match.goles_a!, match.goles_b!, player.predA, player.predB)}
+                                            </span>
+                                          )}
                                         </span>
                                       </div>
-                                      <span className={`text-sm font-black px-2 py-1 rounded-md ${
-                                        pts === 5 
-                                          ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
-                                          : pts === 3
-                                          ? 'bg-sky-500/10 text-sky-500 border border-sky-500/20'
-                                          : pts === 2
-                                          ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                                          : pts === 1
-                                          ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
-                                          : 'bg-muted text-muted-foreground'
-                                      }`}>
-                                        +{pts} pts
-                                      </span>
+                                      {showPts && (
+                                        <span className={`text-sm font-black px-2 py-1 rounded-md ${
+                                          pts === 5 
+                                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
+                                            : pts === 3
+                                            ? 'bg-sky-500/10 text-sky-500 border border-sky-500/20'
+                                            : pts === 2
+                                            ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                                            : pts === 1
+                                            ? 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
+                                            : 'bg-muted text-muted-foreground'
+                                        }`}>
+                                          +{pts} pts
+                                        </span>
+                                      )}
                                     </div>
                                   );
                                 })}
