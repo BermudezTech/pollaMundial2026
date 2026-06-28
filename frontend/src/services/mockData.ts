@@ -110,6 +110,33 @@ export function calculateMatchPoints(
         puntos += 2;
       }
     }
+
+    // Reglas de Bonus adicionales a partir de Fase Eliminatoria
+    const predDiff = predA - predB;
+    const predWinner = predDiff > 0 ? 'A' : predDiff < 0 ? 'B' : 'EMPATE';
+
+    let basePoints = 0;
+    if (realA === predA && realB === predB) {
+      basePoints = 5;
+    } else if (realWinner === predWinner) {
+      basePoints = 3;
+    } else if (realA === predA || realB === predB) {
+      basePoints = 1;
+    }
+
+    // Bonus 1: Goles Individuales en Ganador Seco (+1 Punto)
+    if (basePoints === 3 && (realA === predA || realB === predB)) {
+      puntos += 1;
+    }
+
+    // Bonus 2: Arco Invicto (+1 Punto)
+    if (realWinner === predWinner && realWinner !== 'EMPATE') {
+      if (realWinner === 'A' && realB === 0 && predB === 0) {
+        puntos += 1;
+      } else if (realWinner === 'B' && realA === 0 && predA === 0) {
+        puntos += 1;
+      }
+    }
   }
   
   return puntos;

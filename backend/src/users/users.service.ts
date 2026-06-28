@@ -23,6 +23,19 @@ export class UsersService {
     const leaderboard = [];
     const prediccionesAActualizar = [];
 
+    // Mapa para contar cuántas veces se predijo cada marcador por partido
+    const matchPredictionCounts: Record<number, Record<string, number>> = {};
+    for (const user of users) {
+      for (const pred of user.predicciones) {
+        const partidoId = pred.partido_id;
+        const key = `${pred.prediccion_goles_a}-${pred.prediccion_goles_b}`;
+        if (!matchPredictionCounts[partidoId]) {
+          matchPredictionCounts[partidoId] = {};
+        }
+        matchPredictionCounts[partidoId][key] = (matchPredictionCounts[partidoId][key] || 0) + 1;
+      }
+    }
+
     for (const user of users) {
       let totalPuntos = 0;
       let marcadoresExactos = 0;
@@ -56,6 +69,30 @@ export class UsersService {
             puntos = 3;
           } else if (golesAReal === golesAPred || golesBReal === golesBPred) {
             puntos = 1;
+          }
+
+          // Reglas de Bonus adicionales a partir de Fase Eliminatoria (Dieciseisavos, fase_id >= 13)
+          if (partido.fase_id >= 13) {
+            // Bonus 1: Goles Individuales en Ganador Seco (+1 Punto)
+            if (puntos === 3 && (golesAReal === golesAPred || golesBReal === golesBPred)) {
+              puntos += 1;
+            }
+
+            // Bonus 2: Arco Invicto (+1 Punto)
+            if (ganadorReal === 'A' && golesBReal === 0 && ganadorPred === 'A' && golesBPred === 0) {
+              puntos += 1;
+            } else if (ganadorReal === 'B' && golesAReal === 0 && ganadorPred === 'B' && golesAPred === 0) {
+              puntos += 1;
+            }
+
+            // Bonus 3: Marcador Único (+2 Puntos)
+            if (esMarcadorExacto) {
+              const key = `${golesAPred}-${golesBPred}`;
+              const count = matchPredictionCounts[partido.id]?.[key] || 0;
+              if (count === 1) {
+                puntos += 2;
+              }
+            }
           }
 
           // Regla Especial para Penaltis (Fase Eliminatoria)

@@ -53,13 +53,13 @@ function getPointsReason(
     }
     return base;
   }
-  
+
   const realDiff = realA - realB;
   const predDiff = predA - predB;
-  
+
   const realWinner = realDiff > 0 ? 'A' : realDiff < 0 ? 'B' : 'EMPATE';
   const predWinner = predDiff > 0 ? 'A' : predDiff < 0 ? 'B' : 'EMPATE';
-  
+
   if (realWinner === predWinner) {
     const base = 'Ganador o Empate Seco';
     if (permiteEmpate === false && realWinner === 'EMPATE' && clasificaReal && prediccionClasifica) {
@@ -69,21 +69,89 @@ function getPointsReason(
     }
     return base;
   }
-  
+
   if (realA === predA || realB === predB) {
     return 'Acierto de Goles Individual';
   }
-  
+
   return 'Sin Aciertos';
+}
+
+function getBonusBreakdown(
+  faseId: number,
+  match: Partido,
+  predA: number,
+  predB: number,
+  permiteEmpate: boolean,
+  clasificaReal: string | null,
+  predClasifica: string | null,
+  puntosGanados: number
+): string[] {
+  if (faseId < 13) return [];
+
+  const bonuses: string[] = [];
+  const realA = match.goles_a ?? 0;
+  const realB = match.goles_b ?? 0;
+
+  const realDiff = realA - realB;
+  const predDiff = predA - predB;
+
+  const realWinner = realDiff > 0 ? 'A' : realDiff < 0 ? 'B' : 'EMPATE';
+  const predWinner = predDiff > 0 ? 'A' : predDiff < 0 ? 'B' : 'EMPATE';
+
+  let penaltyPoints = 0;
+  if (permiteEmpate === false && realWinner === 'EMPATE' && clasificaReal && predClasifica) {
+    if (clasificaReal === predClasifica) {
+      penaltyPoints = 2;
+    }
+  }
+
+  let basePoints = 0;
+  let esMarcadorExacto = false;
+  if (realA === predA && realB === predB) {
+    basePoints = 5;
+    esMarcadorExacto = true;
+  } else if (realWinner === predWinner) {
+    basePoints = 3;
+  } else if (realA === predA || realB === predB) {
+    basePoints = 1;
+  }
+
+  // 1. Arco Invicto Check (+1 pt)
+  let earnedCleanSheet = false;
+  if (realWinner === predWinner && realWinner !== 'EMPATE') {
+    if ((realWinner === 'A' && realB === 0 && predB === 0) || (realWinner === 'B' && realA === 0 && predA === 0)) {
+      earnedCleanSheet = true;
+    }
+  }
+
+  if (earnedCleanSheet) {
+    bonuses.push('Arco Invicto (+1 pt)');
+  }
+
+  // 2. Goles Individuales Check (+1 pt)
+  if (basePoints === 3 && (realA === predA || realB === predB)) {
+    bonuses.push('Goles Individuales (+1 pt)');
+  }
+
+  // 3. Marcador Único Check (+2 pts)
+  if (esMarcadorExacto && puntosGanados > 0) {
+    const expectedPoints = basePoints + penaltyPoints + (earnedCleanSheet ? 1 : 0);
+    if (puntosGanados === expectedPoints + 2) {
+      bonuses.push('Marcador Único (+2 pts)');
+    }
+  }
+
+  return bonuses;
 }
 
 interface UserMatchCardProps {
   match: Partido;
   fase: Fase;
-  userPred: { predA: number; predB: number; predClasifica: string | null } | undefined;
+  userPred: { predA: number; predB: number; predClasifica: string | null; puntosGanados?: number } | undefined;
   isPhaseActive: boolean;
   expandedMatches: Record<number, boolean>;
-  otherPredictions: Record<number, { name: string; predA: number; predB: number; prediccion_clasifica?: string | null }[]>;
+  otherPredictions: Record<number, { name: string; predA: number; predB: number; prediccion_clasifica?: string | null; puntos_ganados?: number }[]>;
   loadingOthers: Record<number, boolean>;
   toggleDetails: (matchId: number) => void;
   onSavePrediction: (matchId: number, predAStr: string, predBStr: string, predClasifica: string | null) => void;
@@ -130,7 +198,7 @@ function UserMatchCard({
     match.goles_b !== null &&
     userPred !== undefined
   ) {
-    puntosGanados = calculatePoints(
+    const calcPts = calculatePoints(
       match.goles_a,
       match.goles_b,
       userPred.predA,
@@ -139,6 +207,9 @@ function UserMatchCard({
       match.clasifica_real,
       userPred.predClasifica
     );
+    puntosGanados = userPred.puntosGanados !== undefined && userPred.puntosGanados > 0
+      ? userPred.puntosGanados
+      : calcPts;
   }
 
   const matchDate = new Date(match.fecha_hora);
@@ -155,7 +226,7 @@ function UserMatchCard({
             </div>
             <h3 className="font-bold text-foreground">Fase No Activa</h3>
             <p className="text-xs text-muted-foreground leading-normal">
-              Esta fase aún no está disponible para predicciones. Se activará cuando finalice la fase de grupos.
+              Esta fase aún no está disponible para predicciones. Se activará cuando finalice la fase anterior.
             </p>
           </div>
         </div>
@@ -184,8 +255,8 @@ function UserMatchCard({
         {match.estado === 'PROGRAMADO' && !isLocked ? (
           <div className="flex flex-col items-center gap-3 w-full sm:w-auto z-20">
             <div className="flex items-center gap-3 bg-muted/30 px-4 py-3 rounded-2xl border border-border shadow-inner w-full justify-center">
-              <input 
-                type="number" 
+              <input
+                type="number"
                 min="0"
                 value={predA}
                 onChange={(e) => setPredA(e.target.value)}
@@ -195,8 +266,8 @@ function UserMatchCard({
               <div className="bg-muted border border-border text-muted-foreground font-black text-xs px-2 py-1 rounded-md">
                 VS
               </div>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 min="0"
                 value={predB}
                 onChange={(e) => setPredB(e.target.value)}
@@ -247,10 +318,10 @@ function UserMatchCard({
           <span className="text-lg font-bold text-foreground text-center leading-tight truncate w-full px-2">{teamBName}</span>
         </div>
       </div>
-      
+
       <div className="px-6 py-4 bg-card border-t border-border flex flex-col gap-4">
         {match.estado === 'PROGRAMADO' && !isLocked ? (
-          <button 
+          <button
             onClick={() => onSavePrediction(match.id, predA, predB, isDraw ? (predClasifica || 'A') : null)}
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 rounded-xl transition-colors animate-in duration-200"
           >
@@ -278,7 +349,7 @@ function UserMatchCard({
                   </div>
                 ) : (
                   <div className="flex flex-col items-end text-muted-foreground">
-                    <span className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1"><Lock className="w-3 h-3"/> Cerrado</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1"><Lock className="w-3 h-3" /> Cerrado</span>
                     <span className="text-sm font-bold">Partido en curso</span>
                   </div>
                 )}
@@ -303,7 +374,7 @@ function UserMatchCard({
               )}
 
               {match.estado === 'FINALIZADO' && userPred !== undefined && (
-                <div className="border-t border-border/40 pt-1.5">
+                <div className="border-t border-border/40 pt-1.5 flex flex-col gap-1">
                   <span className="text-[10px] text-primary font-bold uppercase tracking-wider">
                     {getPointsReason(
                       match.goles_a || 0,
@@ -315,6 +386,28 @@ function UserMatchCard({
                       userPred.predClasifica
                     )}
                   </span>
+                  {(() => {
+                    const bonuses = getBonusBreakdown(
+                      fase.id,
+                      match,
+                      userPred.predA,
+                      userPred.predB,
+                      fase.permite_empate,
+                      match.clasifica_real,
+                      userPred.predClasifica,
+                      puntosGanados
+                    );
+                    if (bonuses.length === 0) return null;
+                    return (
+                      <div className="flex flex-wrap gap-1.5 mt-1">
+                        {bonuses.map((b) => (
+                          <span key={b} className="text-[9px] font-bold bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 px-1.5 py-0.5 rounded-md border border-yellow-500/20">
+                            ★ {b}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>
@@ -349,15 +442,16 @@ function UserMatchCard({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {otherPredictions[match.id].map((player) => {
                       const showPts = match.estado === 'FINALIZADO' && match.goles_a !== null && match.goles_b !== null;
-                      const pts = showPts ? calculatePoints(
-                        match.goles_a!, 
-                        match.goles_b!, 
-                        player.predA, 
+                      const calcPts = showPts ? calculatePoints(
+                        match.goles_a!,
+                        match.goles_b!,
+                        player.predA,
                         player.predB,
                         fase.permite_empate,
                         match.clasifica_real,
                         player.prediccion_clasifica
                       ) : 0;
+                      const pts = showPts ? (player.puntos_ganados !== undefined && player.puntos_ganados > 0 ? player.puntos_ganados : calcPts) : 0;
                       return (
                         <div key={player.name} className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border/60 hover:bg-muted/70 transition-all">
                           <div className="flex flex-col">
@@ -373,25 +467,41 @@ function UserMatchCard({
                                 </span>
                               )}
                               {showPts && (
-                                <span className="text-[10px] text-primary bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider w-fit mt-1">
-                                  {getPointsReason(
-                                    match.goles_a!, 
-                                    match.goles_b!, 
-                                    player.predA, 
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  <span className="text-[9px] text-primary bg-primary/5 border border-primary/10 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider w-fit">
+                                    {getPointsReason(
+                                      match.goles_a!,
+                                      match.goles_b!,
+                                      player.predA,
+                                      player.predB,
+                                      fase.permite_empate,
+                                      match.clasifica_real,
+                                      player.prediccion_clasifica
+                                    )}
+                                  </span>
+                                  {getBonusBreakdown(
+                                    fase.id,
+                                    match,
+                                    player.predA,
                                     player.predB,
                                     fase.permite_empate,
                                     match.clasifica_real,
-                                    player.prediccion_clasifica
-                                  )}
-                                </span>
+                                    player.prediccion_clasifica || null,
+                                    player.puntos_ganados || 0
+                                  ).map((b) => (
+                                    <span key={b} className="text-[9px] font-bold bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 px-1.5 py-0.5 rounded border border-yellow-500/20 w-fit">
+                                      ★ {b}
+                                    </span>
+                                  ))}
+                                </div>
                               )}
                             </span>
                           </div>
                           {showPts && (
                             <span className={`text-sm font-black px-2 py-1 rounded-md ${
-                              pts === 5 || pts === 7
-                                ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' 
-                                : pts === 3 || pts === 5
+                              pts >= 5
+                                ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                : pts === 3 || pts === 4
                                 ? 'bg-sky-500/10 text-sky-500 border border-sky-500/20'
                                 : pts === 2
                                 ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
@@ -427,8 +537,8 @@ export default function Fases() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [localPredictions, setLocalPredictions] = useState<Record<number, { predA: number; predB: number; predClasifica: string | null }>>({});
-  
+  const [localPredictions, setLocalPredictions] = useState<Record<number, { predA: number; predB: number; predClasifica: string | null; puntosGanados?: number }>>({});
+
   const [toast, setToast] = useState<{
     show: boolean;
     message: string;
@@ -460,13 +570,25 @@ export default function Fases() {
       setFases(data);
 
       if (data.length > 0 && selectedFaseId === null) {
-        const initialFase = paramFaseId ? parseInt(paramFaseId) : data[0].id;
+        let initialFase = paramFaseId ? parseInt(paramFaseId) : data[0].id;
+        if (!paramFaseId) {
+          // Busca la primera fase que contenga partidos pendientes (PROGRAMADO)
+          const currentActiveFase = data.find(fase =>
+            fase.partidos.some(match => match.estado === 'PROGRAMADO')
+          );
+          if (currentActiveFase) {
+            initialFase = currentActiveFase.id;
+          } else {
+            // Si todos los partidos del torneo finalizaron, mostramos la última fase
+            initialFase = data[data.length - 1].id;
+          }
+        }
         setSelectedFaseId(initialFase);
       }
 
-      const predictions: Record<number, { predA: number; predB: number; predClasifica: string | null }> = {};
+      const predictions: Record<number, { predA: number; predB: number; predClasifica: string | null; puntosGanados?: number }> = {};
       const userUuid = localStorage.getItem('user_uuid') || localStorage.getItem('uuid');
-      
+
       if (userUuid) {
         try {
           const predResponse = await fetch(`/api/predictions/${userUuid}`);
@@ -477,6 +599,7 @@ export default function Fases() {
                 predA: pred.prediccion_goles_a,
                 predB: pred.prediccion_goles_b,
                 predClasifica: pred.prediccion_clasifica,
+                puntosGanados: pred.puntos_ganados,
               };
             });
           }
@@ -532,13 +655,13 @@ export default function Fases() {
     });
   }, [selectedFaseId, phaseMatches]);
 
-  const [otherPredictions, setOtherPredictions] = useState<Record<number, { name: string; predA: number; predB: number; prediccion_clasifica?: string | null }[]>>({});
+  const [otherPredictions, setOtherPredictions] = useState<Record<number, { name: string; predA: number; predB: number; prediccion_clasifica?: string | null; puntos_ganados?: number }[]>>({});
   const [loadingOthers, setLoadingOthers] = useState<Record<number, boolean>>({});
 
   const toggleDetails = async (matchId: number) => {
     const isExpanding = !expandedMatches[matchId];
     setExpandedMatches(prev => ({ ...prev, [matchId]: isExpanding }));
-    
+
     if (isExpanding && !otherPredictions[matchId]) {
       setLoadingOthers(prev => ({ ...prev, [matchId]: true }));
       try {
@@ -615,7 +738,7 @@ export default function Fases() {
       <div className="bg-card border border-border rounded-xl p-8 text-center space-y-4">
         <div className="text-destructive text-lg font-bold">Ocurrió un error al cargar los partidos</div>
         <p className="text-muted-foreground">{error}</p>
-        <button 
+        <button
           onClick={loadFases}
           className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2 rounded-lg transition-colors"
         >
@@ -637,11 +760,10 @@ export default function Fases() {
           <button
             key={fase.id}
             onClick={() => setSelectedFaseId(fase.id)}
-            className={`whitespace-nowrap px-4 py-2 rounded-lg font-medium transition-colors ${
-              selectedFaseId === fase.id 
-                ? 'bg-primary text-primary-foreground shadow-md' 
+            className={`whitespace-nowrap px-4 py-2 rounded-lg font-medium transition-colors ${selectedFaseId === fase.id
+                ? 'bg-primary text-primary-foreground shadow-md'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-            }`}
+              }`}
           >
             {fase.nombre}
           </button>
@@ -686,7 +808,7 @@ export default function Fases() {
               {toast.message}
             </span>
           </div>
-          <button 
+          <button
             onClick={() => setToast(prev => ({ ...prev, show: false }))}
             className="text-muted-foreground hover:text-foreground hover:bg-muted p-1 rounded-lg transition-colors cursor-pointer"
           >

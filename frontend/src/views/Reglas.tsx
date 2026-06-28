@@ -20,19 +20,19 @@ export default function Reglas() {
         <div className="p-6 space-y-6">
           <p className="text-foreground leading-relaxed">
             Cada jugador realiza un aporte de <span className="font-bold text-emerald-500">100.000 COP</span> al inicio del torneo.
-            Actualmente somos <span className="font-bold">9 participantes</span>, por lo que el pozo total acumulado es de <span className="font-bold text-emerald-500">900.000 COP</span>.
+            Actualmente somos <span className="font-bold">8 participantes</span>, por lo que el pozo total acumulado es de <span className="font-bold text-emerald-500">800.000 COP</span>.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-background border border-border rounded-xl p-4 flex flex-col items-center justify-center gap-2 text-center shadow-sm">
               <Trophy className="text-yellow-500 w-8 h-8" />
               <div className="text-muted-foreground font-medium text-sm">Primer Puesto</div>
-              <div className="text-2xl font-black text-foreground">500.000 COP</div>
+              <div className="text-2xl font-black text-foreground">450.000 COP</div>
             </div>
             <div className="bg-background border border-border rounded-xl p-4 flex flex-col items-center justify-center gap-2 text-center shadow-sm">
               <Trophy className="text-neutral-400 w-8 h-8" />
               <div className="text-muted-foreground font-medium text-sm">Segundo Puesto</div>
-              <div className="text-2xl font-black text-foreground">250.000 COP</div>
+              <div className="text-2xl font-black text-foreground">200.000 COP</div>
             </div>
             <div className="bg-background border border-border rounded-xl p-4 flex flex-col items-center justify-center gap-2 text-center shadow-sm">
               <Trophy className="text-amber-700 w-8 h-8" />
@@ -101,12 +101,32 @@ export default function Reglas() {
 
           <div className="mt-8 bg-primary/10 border border-primary/20 rounded-xl p-5">
             <h3 className="font-bold text-primary flex items-center gap-2 mb-2">
-              ⚽ Regla Especial para Penaltis (Octavos en adelante)
+              ⚽ Regla Especial para Penaltis (Dieciseisavos en adelante)
             </h3>
             <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
               <li>En fases de eliminación no hay empates reales, pero debes predecir un marcador (ej. 1 - 1) y <strong>seleccionar qué equipo clasifica</strong>.</li>
               <li>El marcador para cálculo de goles será el del tiempo reglamentario (ej. 1 - 1).</li>
               <li>Si aciertas qué equipo clasificaba por penaltis, se te otorgan <strong>2 puntos</strong> adicionales.</li>
+            </ul>
+          </div>
+
+          <div className="mt-6 bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-5">
+            <h3 className="font-bold text-yellow-600 dark:text-yellow-400 flex items-center gap-2 mb-2">
+              ⭐ Puntos de Bonus (Fase Eliminatoria - Dieciseisavos en adelante)
+            </h3>
+            <p className="text-xs text-muted-foreground mb-3">
+              Estos bonus adicionales se aplican acumulativamente únicamente a partir de la fase de dieciseisavos de final en adelante:
+            </p>
+            <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
+              <li>
+                <strong className="text-foreground">Goles Individuales en Ganador Seco (+1 pt):</strong> Si aciertas el ganador (3 pts base) y la cantidad exacta de goles de al menos uno de los dos equipos, recibes <span className="font-semibold text-primary">+1 punto de bonus</span>. <span className="italic text-xs text-muted-foreground">(No aplica en Marcador Exacto de 5 pts).</span>
+              </li>
+              <li>
+                <strong className="text-foreground">Arco Invicto (+1 pt):</strong> Si aciertas el ganador y el equipo perdedor se queda en 0 goles, recibes <span className="font-semibold text-primary">+1 punto de bonus</span>.
+              </li>
+              <li>
+                <strong className="text-foreground">Marcador Único (+2 pts):</strong> Si aciertas el Marcador Exacto (5 pts base) y eres el <strong>único participante</strong> de la polla que predijo ese resultado exacto, recibes <span className="font-semibold text-primary">+2 puntos de bonus</span>.
+              </li>
             </ul>
           </div>
 

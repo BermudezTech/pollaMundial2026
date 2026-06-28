@@ -182,3 +182,8 @@
     border-right-color: var(--border);
   }
 }
+
+/* Ensure emojis work and render beautifully in all browsers */
+body, button, input, select, textarea {
+  font-family: 'Geist Variable', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}

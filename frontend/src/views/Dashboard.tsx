@@ -80,7 +80,7 @@ export default function Dashboard() {
       <div className="bg-card border border-border rounded-xl p-8 text-center space-y-4">
         <div className="text-destructive text-lg font-bold">Ocurrió un error</div>
         <p className="text-muted-foreground">{error}</p>
-        <button 
+        <button
           onClick={fetchLeaderboard}
           className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2 rounded-lg transition-colors"
         >
@@ -93,22 +93,22 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-2 justify-end w-full">
-        <button 
+        <button
           onClick={scrollToTodayMatches}
           className="shrink-0 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold px-4 py-2.5 rounded-xl transition-all border border-border shadow-sm flex items-center gap-2 text-sm justify-center cursor-pointer"
         >
           <CalendarClock className="w-4 h-4" />
           Partidos de Hoy
         </button>
-        <Link 
-          to="/reglas" 
+        <Link
+          to="/reglas"
           className="shrink-0 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-bold px-4 py-2.5 rounded-xl transition-all border border-border shadow-sm flex items-center gap-2 text-sm justify-center"
         >
           <BookOpen className="w-4 h-4" />
           Reglas
         </Link>
-        <Link 
-          to="/fases" 
+        <Link
+          to="/fases"
           className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 text-sm justify-center"
         >
           <Trophy className="w-4 h-4" />
@@ -137,7 +137,7 @@ export default function Dashboard() {
             <Trophy className="text-yellow-500 w-6 h-6" />
             <h2 className="text-xl font-bold text-foreground">Leaderboard</h2>
           </div>
-          <button 
+          <button
             onClick={fetchLeaderboard}
             className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
             title="Actualizar tabla"
@@ -145,7 +145,7 @@ export default function Dashboard() {
             <RefreshCw className="w-5 h-5" />
           </button>
         </div>
-        
+
         <div className="overflow-x-auto">
           {leaderboard.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
@@ -219,7 +219,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-bold text-foreground">Partidos de Hoy</h2>
           </div>
         </div>
-        
+
         <div className="p-6">
           {todayMatches.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
@@ -231,14 +231,14 @@ export default function Dashboard() {
                 const pred = userPredictions[match.id];
                 const matchDate = new Date(match.fecha_hora);
                 const isLocked = match.estado === 'FINALIZADO' || (matchDate.getTime() - new Date().getTime() <= 300000);
-                
+
                 return (
                   <div key={match.id} className="bg-muted/30 border border-border rounded-xl p-4 flex flex-col gap-3">
                     <div className="flex justify-between items-center text-xs font-semibold text-muted-foreground">
                       <span className="uppercase tracking-wider">{match.fase_nombre}</span>
                       <span>{matchDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
-                    
+
                     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 bg-background rounded-lg p-3 border border-border shadow-inner w-full">
                       <div className="flex flex-col items-center min-w-0 gap-1">
                         <span className="font-bold text-xs sm:text-sm text-foreground leading-tight text-center break-words w-full px-0.5">{match.equipo_a}</span>
@@ -250,7 +250,7 @@ export default function Dashboard() {
                         {match.estado === 'FINALIZADO' && <span className="text-lg font-black text-primary">{match.score_b}</span>}
                       </div>
                     </div>
-                    
+
                     <div className="flex justify-between items-center pt-2 border-t border-border">
                       <div className="flex items-center gap-2">
                         {pred ? (
@@ -264,7 +264,7 @@ export default function Dashboard() {
                           </span>
                         )}
                       </div>
-                      
+
                       <div className="flex items-center">
                         {isLocked ? (
                           <span className="text-xs font-bold uppercase text-muted-foreground flex items-center gap-1">
