@@ -20,7 +20,7 @@ export default function MainLayout() {
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col w-64 border-r border-border bg-card/50 p-4 shrink-0">
         <Link to="/dashboard" className="flex items-center gap-3 mb-8 mt-4 px-2 hover:opacity-85 transition-opacity">
-          <img src="/2026FIFALOGO.webp" alt="FIFA 2026" className="w-8 h-8 object-contain shrink-0" />
+          <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/17/2026_FIFA_World_Cup_emblem.svg/250px-2026_FIFA_World_Cup_emblem.svg.png" alt="FIFA 2026" className="w-8 h-8 object-contain shrink-0" />
           <div className="text-2xl font-black italic tracking-tighter text-primary">
             POLLA MUNDIAL
           </div>
@@ -77,7 +77,7 @@ export default function MainLayout() {
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card/80 sticky top-0 z-50 backdrop-blur-md">
           <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-85 transition-opacity">
-            <img src="/2026FIFALOGO.webp" alt="FIFA 2026" className="w-7 h-7 object-contain shrink-0" />
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/1/17/2026_FIFA_World_Cup_emblem.svg/250px-2026_FIFA_World_Cup_emblem.svg.png" alt="FIFA 2026" className="w-7 h-7 object-contain shrink-0" />
             <div className="text-xl font-black italic tracking-tighter text-primary">
               POLLA MUNDIAL
             </div>

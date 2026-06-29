@@ -69,22 +69,50 @@ export function getPlayerPrediction(playerId: string, matchId: number): { predA:
   return { predA, predB };
 }
 
-export function calculateMatchPoints(realA: number, realB: number, predA: number, predB: number): number {
-  if (realA === predA && realB === predB) return 5; // Exact Score
+export function calculateMatchPoints(
+  realA: number,
+  realB: number,
+  predA: number,
+  predB: number,
+  permiteEmpate?: boolean,
+  clasificaReal?: string | null,
+  prediccionClasifica?: string | null
+): number {
+  let puntos = 0;
   
-  const realDiff = realA - realB;
-  const predDiff = predA - predB;
-  
-  const realWinner = realDiff > 0 ? 1 : realDiff < 0 ? -1 : 0;
-  const predWinner = predDiff > 0 ? 1 : predDiff < 0 ? -1 : 0;
-  
-  if (realWinner === predWinner) {
-    return 3; // Correct winner or draw
+  if (realA === predA && realB === predB) {
+    puntos = 5; // Exact Score
+  } else {
+    const realDiff = realA - realB;
+    const predDiff = predA - predB;
+    
+    const realWinner = realDiff > 0 ? 'A' : realDiff < 0 ? 'B' : 'EMPATE';
+    const predWinner = predDiff > 0 ? 'A' : predDiff < 0 ? 'B' : 'EMPATE';
+    
+    if (realWinner === predWinner) {
+      puntos = 3; // Correct winner or draw
+    } else if (realA === predA || realB === predB) {
+      puntos = 1; // Individual goals
+    }
+  }
+
+  // Regla Especial para Penaltis (Fase Eliminatoria)
+  if (permiteEmpate === false) {
+    const realDiff = realA - realB;
+    const realWinner = realDiff > 0 ? 'A' : realDiff < 0 ? 'B' : 'EMPATE';
+    
+    if (
+      realWinner === 'EMPATE' &&
+      clasificaReal &&
+      prediccionClasifica
+    ) {
+      if (clasificaReal === prediccionClasifica) {
+        puntos += 2;
+      }
+    }
   }
   
-  if (realA === predA || realB === predB) return 1; // Individual goals
-  
-  return 0;
+  return puntos;
 }
 
 // Generate the list of 108 matches

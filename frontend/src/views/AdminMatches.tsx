@@ -29,6 +29,245 @@ const formatForInput = (dateStr: string) => {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
+interface AdminMatchCardProps {
+  match: AdminMatch;
+  onUpdate: (
+    matchId: number,
+    scoreAStr: string,
+    scoreBStr: string,
+    estado: 'PROGRAMADO' | 'FINALIZADO',
+    clasificaReal: string | null,
+    equipoAReal?: string,
+    equipoBReal?: string,
+    fechaHora?: string
+  ) => void;
+}
+
+function AdminMatchCard({ match, onUpdate }: AdminMatchCardProps) {
+  const isElimination = match.fase_id >= 13;
+  const faseName = mockFases.find(f => f.id === match.fase_id)?.nombre || `Fase ${match.fase_id}`;
+
+  const [scoreA, setScoreA] = useState<string>(match.score_a !== null ? String(match.score_a) : '');
+  const [scoreB, setScoreB] = useState<string>(match.score_b !== null ? String(match.score_b) : '');
+  const [clasificaReal, setClasificaReal] = useState<string | null>(match.clasifica_real);
+  const [equipoAReal, setEquipoAReal] = useState<string>(match.equipo_a_real || '');
+  const [equipoBReal, setEquipoBReal] = useState<string>(match.equipo_b_real || '');
+  const [fechaHora, setFechaHora] = useState<string>(formatForInput(match.fecha_hora));
+
+  const isDraw = scoreA !== '' && scoreB !== '' && parseInt(scoreA) === parseInt(scoreB);
+
+  useEffect(() => {
+    if (!isDraw) {
+      setClasificaReal(null);
+    } else if (isDraw && !clasificaReal) {
+      setClasificaReal('A');
+    }
+  }, [isDraw, clasificaReal]);
+
+  useEffect(() => {
+    setScoreA(match.score_a !== null ? String(match.score_a) : '');
+    setScoreB(match.score_b !== null ? String(match.score_b) : '');
+    setClasificaReal(match.clasifica_real);
+    setEquipoAReal(match.equipo_a_real || '');
+    setEquipoBReal(match.equipo_b_real || '');
+    setFechaHora(formatForInput(match.fecha_hora));
+  }, [match]);
+
+  const triggerUpdate = (newEstado: 'PROGRAMADO' | 'FINALIZADO') => {
+    onUpdate(
+      match.id,
+      scoreA,
+      scoreB,
+      newEstado,
+      isDraw ? (clasificaReal || 'A') : null,
+      isElimination ? equipoAReal : undefined,
+      isElimination ? equipoBReal : undefined,
+      fechaHora
+    );
+  };
+
+  return (
+    <div
+      className={`bg-card border rounded-2xl overflow-hidden shadow-md transition-all flex flex-col justify-between ${
+        match.estado === 'FINALIZADO' ? 'border-emerald-500/20 bg-emerald-500/[0.01]' : 'border-border'
+      }`}
+    >
+      {/* Header */}
+      <div className="px-4 py-2 border-b border-border bg-muted/40 flex justify-between items-center text-xs">
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-muted-foreground">#{match.id} - {faseName}</span>
+          <span className="text-[10px] text-primary font-semibold">
+            {new Date(match.fecha_hora).toLocaleString('es-ES', { 
+              weekday: 'short', 
+              month: 'short', 
+              day: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            })}
+          </span>
+        </div>
+        <span className={`flex items-center gap-1 font-bold ${match.estado === 'FINALIZADO' ? 'text-emerald-500' : 'text-amber-500'}`}>
+          {match.estado === 'FINALIZADO' ? (
+            <>
+              <CheckCircle className="w-3 h-3" /> FINALIZADO
+            </>
+          ) : (
+            <>
+              <Clock className="w-3 h-3" /> PROGRAMADO
+            </>
+          )}
+        </span>
+      </div>
+
+      {/* Date-time Row */}
+      <div className="px-4 pt-3 pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 bg-muted/10">
+        <span className="text-xs font-bold text-muted-foreground">Fecha y Hora:</span>
+        <input
+          type="datetime-local"
+          value={fechaHora}
+          onChange={(e) => setFechaHora(e.target.value)}
+          className="text-xs font-bold text-foreground bg-background border border-border rounded-lg px-2 py-1.5 focus:ring-2 focus:ring-primary focus:outline-none w-full sm:w-auto"
+        />
+      </div>
+
+      {/* Score Input Body */}
+      <div className="p-4 flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-4">
+          {/* Team A */}
+          <div className="flex-1 flex flex-col items-center text-center gap-2">
+            {(() => {
+              const emojiRegex = /[\u{1F300}-\u{1F9FF}][\u{E0020}-\u{E007F}]*|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]{2}/u;
+              const matchEmoji = match.equipo_a.match(emojiRegex);
+              return matchEmoji ? (
+                <span className="text-2xl select-none">{matchEmoji[0]}</span>
+              ) : (
+                <span className="text-xs font-black text-primary">
+                  {match.equipo_a.substring(0, 3).toUpperCase()}
+                </span>
+              );
+            })()}
+            
+            {isElimination ? (
+              <div className="w-full flex flex-col gap-1">
+                <input 
+                  type="text"
+                  value={equipoAReal}
+                  onChange={(e) => setEquipoAReal(e.target.value)}
+                  placeholder={match.equipo_a_placeholder || match.equipo_a}
+                  className="w-full text-center text-xs font-bold bg-background border border-border rounded-lg px-2 py-1 focus:ring-1 focus:ring-primary focus:outline-none"
+                />
+                <span className="text-[10px] text-muted-foreground italic truncate block">
+                  Original: {match.equipo_a_placeholder}
+                </span>
+              </div>
+            ) : (
+              <span className="text-sm font-bold text-foreground line-clamp-1">{match.equipo_a}</span>
+            )}
+          </div>
+
+          {/* Inputs */}
+          <div className="flex items-center gap-2 shrink-0">
+            <input
+              type="number"
+              min="0"
+              value={scoreA}
+              onChange={(e) => setScoreA(e.target.value)}
+              className="w-12 h-12 bg-background border border-border rounded-xl text-center text-xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
+              placeholder="-"
+            />
+            <span className="text-xs text-muted-foreground font-bold">VS</span>
+            <input
+              type="number"
+              min="0"
+              value={scoreB}
+              onChange={(e) => setScoreB(e.target.value)}
+              className="w-12 h-12 bg-background border border-border rounded-xl text-center text-xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
+              placeholder="-"
+            />
+          </div>
+
+          {/* Team B */}
+          <div className="flex-1 flex flex-col items-center text-center gap-2">
+            {(() => {
+              const emojiRegex = /[\u{1F300}-\u{1F9FF}][\u{E0020}-\u{E007F}]*|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]{2}/u;
+              const matchEmoji = match.equipo_b.match(emojiRegex);
+              return matchEmoji ? (
+                <span className="text-2xl select-none">{matchEmoji[0]}</span>
+              ) : (
+                <span className="text-xs font-black text-primary">
+                  {match.equipo_b.substring(0, 3).toUpperCase()}
+                </span>
+              );
+            })()}
+            
+            {isElimination ? (
+              <div className="w-full flex flex-col gap-1">
+                <input 
+                  type="text"
+                  value={equipoBReal}
+                  onChange={(e) => setEquipoBReal(e.target.value)}
+                  placeholder={match.equipo_b_placeholder || match.equipo_b}
+                  className="w-full text-center text-xs font-bold bg-background border border-border rounded-lg px-2 py-1 focus:ring-1 focus:ring-primary focus:outline-none"
+                />
+                <span className="text-[10px] text-muted-foreground italic truncate block">
+                  Original: {match.equipo_b_placeholder}
+                </span>
+              </div>
+            ) : (
+              <span className="text-sm font-bold text-foreground line-clamp-1">{match.equipo_b}</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Tie-breaker dropdown */}
+      {isElimination && isDraw && (
+        <div className="px-4 pb-3 flex flex-col gap-1 border-t border-border/40 pt-3 bg-amber-500/[0.02]">
+          <label className="text-xs font-bold text-amber-600 dark:text-amber-400">
+            Ganador por Penaltis/Clasificación:
+          </label>
+          <select
+            value={clasificaReal || 'A'}
+            onChange={(e) => setClasificaReal(e.target.value)}
+            className="bg-background border border-border rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground font-semibold cursor-pointer w-full"
+          >
+            <option value="A">{equipoAReal || match.equipo_a_placeholder || match.equipo_a}</option>
+            <option value="B">{equipoBReal || match.equipo_b_placeholder || match.equipo_b}</option>
+          </select>
+        </div>
+      )}
+
+      {/* Actions Footer */}
+      <div className="px-4 py-3 border-t border-border bg-muted/20 flex gap-2">
+        <button
+          onClick={() => triggerUpdate(match.estado)}
+          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors"
+        >
+          <Save className="w-3.5 h-3.5" />
+          Guardar Cambios
+        </button>
+
+        {match.estado === 'PROGRAMADO' ? (
+          <button
+            onClick={() => triggerUpdate('FINALIZADO')}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors"
+          >
+            <CheckCircle className="w-3.5 h-3.5" />
+            Finalizar
+          </button>
+        ) : (
+          <button
+            onClick={() => triggerUpdate('PROGRAMADO')}
+            className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-2 rounded-xl text-xs transition-colors"
+          >
+            Reabrir
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminMatches() {
   const [matches, setMatches] = useState<AdminMatch[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,6 +313,7 @@ export default function AdminMatches() {
     scoreAStr: string,
     scoreBStr: string,
     estado: 'PROGRAMADO' | 'FINALIZADO',
+    clasificaReal: string | null,
     equipoAReal?: string,
     equipoBReal?: string,
     fechaHora?: string
@@ -91,6 +331,7 @@ export default function AdminMatches() {
           goles_a: score_a,
           goles_b: score_b,
           estado,
+          clasifica_real: clasificaReal,
           equipo_a_real: equipoAReal,
           equipo_b_real: equipoBReal,
           fecha_hora: fechaHora ? new Date(fechaHora).toISOString() : undefined,
@@ -110,6 +351,7 @@ export default function AdminMatches() {
             score_a,
             score_b,
             estado,
+            clasifica_real: clasificaReal,
             equipo_a: finalAReal || m.equipo_a_placeholder || m.equipo_a,
             equipo_b: finalBReal || m.equipo_b_placeholder || m.equipo_b,
             equipo_a_real: finalAReal,
@@ -201,196 +443,13 @@ export default function AdminMatches() {
             No se encontraron partidos para los filtros seleccionados.
           </div>
         ) : (
-          filteredMatches.map((match) => {
-            const faseName = mockFases.find(f => f.id === match.fase_id)?.nombre || `Fase ${match.fase_id}`;
-            const isElimination = match.fase_id >= 13;
-
-            return (
-              <div
-                key={match.id}
-                className={`bg-card border rounded-2xl overflow-hidden shadow-md transition-all flex flex-col justify-between ${match.estado === 'FINALIZADO' ? 'border-emerald-500/20 bg-emerald-500/[0.01]' : 'border-border'
-                  }`}
-              >
-                {/* Header */}
-                <div className="px-4 py-2 border-b border-border bg-muted/40 flex justify-between items-center text-xs">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-bold text-muted-foreground">#{match.id} - {faseName}</span>
-                    <span className="text-[10px] text-primary font-semibold">
-                      {new Date(match.fecha_hora).toLocaleString('es-ES', { 
-                        weekday: 'short', 
-                        month: 'short', 
-                        day: 'numeric', 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
-                    </span>
-                  </div>
-                  <span className={`flex items-center gap-1 font-bold ${match.estado === 'FINALIZADO' ? 'text-emerald-500' : 'text-amber-500'
-                    }`}>
-                    {match.estado === 'FINALIZADO' ? (
-                      <>
-                        <CheckCircle className="w-3 h-3" /> FINALIZADO
-                      </>
-                    ) : (
-                      <>
-                        <Clock className="w-3 h-3" /> PROGRAMADO
-                      </>
-                    )}
-                  </span>
-                </div>
-
-                {/* Date-time Row */}
-                <div className="px-4 pt-3 pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 bg-muted/10">
-                  <span className="text-xs font-bold text-muted-foreground">Fecha y Hora:</span>
-                  <input
-                    type="datetime-local"
-                    id={`admin-date-${match.id}`}
-                    defaultValue={formatForInput(match.fecha_hora)}
-                    className="text-xs font-bold text-foreground bg-background border border-border rounded-lg px-2 py-1.5 focus:ring-2 focus:ring-primary focus:outline-none w-full sm:w-auto"
-                  />
-                </div>
-
-                {/* Score Input Body */}
-                <div className="p-4 flex flex-col gap-4">
-                  <div className="flex items-center justify-between gap-4">
-                    {/* Team A */}
-                    <div className="flex-1 flex flex-col items-center text-center gap-2">
-                      {(() => {
-                        const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]{2}/u;
-                        const matchEmoji = match.equipo_a.match(emojiRegex);
-                        return matchEmoji ? (
-                          <span className="text-2xl select-none">{matchEmoji[0]}</span>
-                        ) : (
-                          <span className="text-xs font-black text-primary">
-                            {match.equipo_a.substring(0, 3).toUpperCase()}
-                          </span>
-                        );
-                      })()}
-                      
-                      {isElimination ? (
-                        <div className="w-full flex flex-col gap-1">
-                          <input 
-                            type="text"
-                            id={`admin-team-a-${match.id}`}
-                            defaultValue={match.equipo_a_real || ''}
-                            placeholder={match.equipo_a_placeholder || match.equipo_a}
-                            className="w-full text-center text-xs font-bold bg-background border border-border rounded-lg px-2 py-1 focus:ring-1 focus:ring-primary focus:outline-none"
-                          />
-                          <span className="text-[10px] text-muted-foreground italic truncate block">
-                            Original: {match.equipo_a_placeholder}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-sm font-bold text-foreground line-clamp-1">{match.equipo_a}</span>
-                      )}
-                    </div>
-
-                    {/* Inputs */}
-                    <div className="flex items-center gap-2 shrink-0">
-                      <input
-                        type="number"
-                        min="0"
-                        id={`admin-score-a-${match.id}`}
-                        defaultValue={match.score_a ?? ''}
-                        className="w-12 h-12 bg-background border border-border rounded-xl text-center text-xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
-                        placeholder="-"
-                      />
-                      <span className="text-xs text-muted-foreground font-bold">VS</span>
-                      <input
-                        type="number"
-                        min="0"
-                        id={`admin-score-b-${match.id}`}
-                        defaultValue={match.score_b ?? ''}
-                        className="w-12 h-12 bg-background border border-border rounded-xl text-center text-xl font-black text-primary focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
-                        placeholder="-"
-                      />
-                    </div>
-
-                    {/* Team B */}
-                    <div className="flex-1 flex flex-col items-center text-center gap-2">
-                      {(() => {
-                        const emojiRegex = /[\u{1F300}-\u{1F9FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E6}-\u{1F1FF}]{2}/u;
-                        const matchEmoji = match.equipo_b.match(emojiRegex);
-                        return matchEmoji ? (
-                          <span className="text-2xl select-none">{matchEmoji[0]}</span>
-                        ) : (
-                          <span className="text-xs font-black text-primary">
-                            {match.equipo_b.substring(0, 3).toUpperCase()}
-                          </span>
-                        );
-                      })()}
-                      
-                      {isElimination ? (
-                        <div className="w-full flex flex-col gap-1">
-                          <input 
-                            type="text"
-                            id={`admin-team-b-${match.id}`}
-                            defaultValue={match.equipo_b_real || ''}
-                            placeholder={match.equipo_b_placeholder || match.equipo_b}
-                            className="w-full text-center text-xs font-bold bg-background border border-border rounded-lg px-2 py-1 focus:ring-1 focus:ring-primary focus:outline-none"
-                          />
-                          <span className="text-[10px] text-muted-foreground italic truncate block">
-                            Original: {match.equipo_b_placeholder}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-sm font-bold text-foreground line-clamp-1">{match.equipo_b}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions Footer */}
-                <div className="px-4 py-3 border-t border-border bg-muted/20 flex gap-2">
-                  <button
-                    onClick={() => {
-                      const scoreA = (document.getElementById(`admin-score-a-${match.id}`) as HTMLInputElement)?.value || '';
-                      const scoreB = (document.getElementById(`admin-score-b-${match.id}`) as HTMLInputElement)?.value || '';
-                      const teamA = isElimination ? (document.getElementById(`admin-team-a-${match.id}`) as HTMLInputElement)?.value : undefined;
-                      const teamB = isElimination ? (document.getElementById(`admin-team-b-${match.id}`) as HTMLInputElement)?.value : undefined;
-                      const dateVal = (document.getElementById(`admin-date-${match.id}`) as HTMLInputElement)?.value || '';
-                      handleUpdateMatch(match.id, scoreA, scoreB, match.estado, teamA, teamB, dateVal);
-                    }}
-                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors"
-                  >
-                    <Save className="w-3.5 h-3.5" />
-                    Guardar Cambios
-                  </button>
-
-                  {match.estado === 'PROGRAMADO' ? (
-                    <button
-                      onClick={() => {
-                        const scoreA = (document.getElementById(`admin-score-a-${match.id}`) as HTMLInputElement)?.value || '';
-                        const scoreB = (document.getElementById(`admin-score-b-${match.id}`) as HTMLInputElement)?.value || '';
-                        const teamA = isElimination ? (document.getElementById(`admin-team-a-${match.id}`) as HTMLInputElement)?.value : undefined;
-                        const teamB = isElimination ? (document.getElementById(`admin-team-b-${match.id}`) as HTMLInputElement)?.value : undefined;
-                        const dateVal = (document.getElementById(`admin-date-${match.id}`) as HTMLInputElement)?.value || '';
-                        handleUpdateMatch(match.id, scoreA, scoreB, 'FINALIZADO', teamA, teamB, dateVal);
-                      }}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors"
-                    >
-                      <CheckCircle className="w-3.5 h-3.5" />
-                      Finalizar
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        const scoreA = (document.getElementById(`admin-score-a-${match.id}`) as HTMLInputElement)?.value || '';
-                        const scoreB = (document.getElementById(`admin-score-b-${match.id}`) as HTMLInputElement)?.value || '';
-                        const teamA = isElimination ? (document.getElementById(`admin-team-a-${match.id}`) as HTMLInputElement)?.value : undefined;
-                        const teamB = isElimination ? (document.getElementById(`admin-team-b-${match.id}`) as HTMLInputElement)?.value : undefined;
-                        const dateVal = (document.getElementById(`admin-date-${match.id}`) as HTMLInputElement)?.value || '';
-                        handleUpdateMatch(match.id, scoreA, scoreB, 'PROGRAMADO', teamA, teamB, dateVal);
-                      }}
-                      className="bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-2 rounded-xl text-xs transition-colors"
-                    >
-                      Reabrir
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })
+          filteredMatches.map((match) => (
+            <AdminMatchCard
+              key={match.id}
+              match={match}
+              onUpdate={handleUpdateMatch}
+            />
+          ))
         )}
       </div>
     </div>
